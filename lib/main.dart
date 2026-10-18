@@ -8,15 +8,11 @@ import 'dart:async';
 import 'package:window_manager/window_manager.dart';
 import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:just_audio_platform_interface/just_audio_platform_interface.dart';
-import 'package:media_kit/media_kit.dart';
-import 'package:safe_device/safe_device.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 
 import 'l10n/app_localizations.dart';
-import 'models/server_config.dart';
 import 'services/services.dart';
 import 'services/audio_handler.dart';
-import 'services/android_auto_service.dart';
 import 'services/transcoding_service.dart';
 import 'services/local_music_service.dart';
 import 'services/analytics_service.dart';
@@ -64,11 +60,7 @@ Future<void> _showPrivacyPolicyIfNeeded() async {
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<bool> _isRunningOnEmulator() async {
-  if (kDebugMode) return false;
-  if (kIsWeb) return false;
-  if (!Platform.isAndroid && !Platform.isIOS) return false;
-
-  return !(await SafeDevice.isRealDevice);
+  return false;
 }
 
 class _EmulatorWarningScreen extends StatelessWidget {
@@ -196,11 +188,20 @@ void main() async {
 
   ImageCacheConfig.configure();
 
+  if (!kIsWeb && Platform.isAndroid) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  }
+
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness: Brightness.light,
+      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+      systemNavigationBarIconBrightness: Brightness.light,
+      systemNavigationBarContrastEnforced: false,
+      systemStatusBarContrastEnforced: false,
     ),
   );
 
@@ -469,11 +470,7 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
       case AuthState.offlineMode:
         return const MainScreen(isOfflineMode: true);
       case AuthState.serverUnreachable:
-        return _ServerUnreachableScreen(
-          hasOfflineContent: authProvider.hasOfflineContent,
-          onEnterOfflineMode: () => authProvider.enterOfflineMode(),
-          onDisconnect: () => authProvider.disconnect(),
-        );
+        return const MainScreen(isOfflineMode: true);
       case AuthState.authenticating:
         if (authProvider.config == null) {
           if (!_checkedOnboarding) {
@@ -504,183 +501,6 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
         }
         return const LoginScreen();
     }
-  }
-}
-
-class _ServerUnreachableScreen extends StatelessWidget {
-  final bool hasOfflineContent;
-  final VoidCallback onEnterOfflineMode;
-  final VoidCallback onDisconnect;
-
-  const _ServerUnreachableScreen({
-    required this.hasOfflineContent,
-    required this.onEnterOfflineMode,
-    required this.onDisconnect,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-
-    return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.cloud_off_rounded, size: 72, color: Colors.grey),
-              const SizedBox(height: 24),
-              Text(
-                AppLocalizations.of(context)!.serverUnreachableTitle,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                AppLocalizations.of(context)!.serverUnreachableSubtitle,
-                style: const TextStyle(color: Colors.grey),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton.icon(
-                  onPressed: () => authProvider.retryConnection(),
-                  icon: const Icon(Icons.refresh_rounded),
-                  label: Text(
-                    AppLocalizations.of(context)?.retry ?? 'Retry',
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              _buildSwitchProfileButton(context),
-              const SizedBox(height: 12),
-              if (hasOfflineContent) ...[
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton.icon(
-                    onPressed: onEnterOfflineMode,
-                    icon: const Icon(Icons.offline_pin_rounded),
-                    label: Text(AppLocalizations.of(context)!.openOfflineMode),
-                  ),
-                ),
-                const SizedBox(height: 12),
-              ],
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  onPressed: onDisconnect,
-                  icon: const Icon(Icons.logout_rounded),
-                  label: Text(AppLocalizations.of(context)!.disconnect),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSwitchProfileButton(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final l10n = AppLocalizations.of(context)!;
-
-    return FutureBuilder<List<ServerConfig>>(
-      future: authProvider.getSavedProfiles(),
-      builder: (context, snapshot) {
-        final profiles = snapshot.data ?? [];
-        if (profiles.isEmpty) return const SizedBox.shrink();
-
-        final currentConfig = authProvider.config;
-        final otherProfiles = profiles
-            .where(
-              (p) =>
-                  p.serverUrl != currentConfig?.serverUrl ||
-                  p.username != currentConfig?.username,
-            )
-            .toList();
-
-        if (otherProfiles.isEmpty) return const SizedBox.shrink();
-
-        return SizedBox(
-          width: double.infinity,
-          child: OutlinedButton.icon(
-            onPressed: () => _showSwitchProfileDialog(context, otherProfiles),
-            icon: const Icon(Icons.swap_horiz_rounded),
-            label: Text(l10n.switchServer),
-          ),
-        );
-      },
-    );
-  }
-
-  void _showSwitchProfileDialog(
-      BuildContext context, List<ServerConfig> profiles) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final l10n = AppLocalizations.of(context)!;
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Material(
-        color: Colors.transparent,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(ctx).brightness == Brightness.dark
-                ? AppTheme.darkSurface
-                : Colors.white,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-          ),
-          child: SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 8),
-                Container(
-                  width: 36,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: Theme.of(ctx).brightness == Brightness.dark
-                        ? AppTheme.darkDivider
-                        : AppTheme.lightDivider,
-                    borderRadius: BorderRadius.circular(2.5),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  l10n.switchServer,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                ...profiles.map((profile) {
-                  final label = profile.name?.isNotEmpty == true
-                      ? profile.name!
-                      : '${profile.username}@${Uri.tryParse(profile.serverUrl)?.host ?? profile.serverUrl}';
-                  return ListTile(
-                    leading: const Icon(Icons.person_outline),
-                    title: Text(label),
-                    subtitle: Text(profile.serverUrl,
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
-                    onTap: () async {
-                      Navigator.pop(ctx);
-                      await authProvider.switchProfile(profile);
-                    },
-                  );
-                }),
-                const SizedBox(height: 8),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
 

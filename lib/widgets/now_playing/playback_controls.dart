@@ -93,20 +93,38 @@ class _PlayPauseButtonState extends State<_PlayPauseButton> {
       },
       onTapCancel: () => setState(() => _isPressed = false),
       child: AnimatedScale(
-        scale: _isPressed ? 0.92 : 1.0,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.easeOut,
-        child: Container(
+        scale: _isPressed ? 0.88 : 1.0,
+        duration: const Duration(milliseconds: 140),
+        curve: Curves.easeOutCubic,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
           width: widget.size,
           height: widget.size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.white.withValues(alpha: 0.2),
+            color: Colors.white.withValues(alpha: widget.isPlaying ? 0.25 : 0.18),
+            boxShadow: widget.isPlaying
+                ? [
+                    BoxShadow(
+                      color: Colors.white.withValues(alpha: 0.25),
+                      blurRadius: 18,
+                      spreadRadius: 2,
+                    ),
+                  ]
+                : [],
           ),
-          child: Icon(
-            widget.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-            size: widget.size * 0.6,
-            color: Colors.white,
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            transitionBuilder: (child, animation) => ScaleTransition(
+              scale: animation,
+              child: FadeTransition(opacity: animation, child: child),
+            ),
+            child: Icon(
+              widget.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+              key: ValueKey<bool>(widget.isPlaying),
+              size: widget.size * 0.58,
+              color: Colors.white,
+            ),
           ),
         ),
       ),

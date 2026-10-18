@@ -1,7 +1,9 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart' hide RepeatMode;
+import 'dart:ui';
+import 'package:flutter/services.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart' hide RepeatMode;
+import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import 'package:musly/models/song.dart';
@@ -9,8 +11,6 @@ import 'package:musly/models/artist_ref.dart';
 import 'package:musly/models/radio_station.dart';
 import 'package:musly/providers/player_provider.dart';
 import 'package:musly/services/player_ui_settings_service.dart';
-import 'package:musly/services/theme_service.dart';
-import 'package:musly/theme/app_theme.dart';
 import 'package:musly/utils/screen_helper.dart';
 import 'package:musly/services/subsonic_service.dart';
 import 'package:musly/widgets/common/album_artwork.dart';
@@ -49,24 +49,51 @@ class MiniPlayer extends StatelessWidget {
                 : const AssetImage('assets/logo.png') as ImageProvider;
             final topPadding = MediaQuery.of(context).padding.top;
 
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              useRootNavigator: true,
-              backgroundColor: Colors.transparent,
-              constraints: const BoxConstraints(maxWidth: double.infinity),
-              builder: (ctx) => NowPlayingScreen(
-                topPadding: topPadding,
-                image: imageProvider,
-                title: currentSong.title,
-                artist: (currentSong.artistParticipants?.isNotEmpty == true
-                        ? currentSong.artistParticipants!
-                            .map((a) => a.name)
-                            .join(', ')
-                        : currentSong.artist) ??
-                    '',
-                heroTag: 'cover_${currentSong.id}',
-                song: currentSong,
+            Navigator.of(context, rootNavigator: true).push(
+              PageRouteBuilder(
+                opaque: false,
+                barrierColor: Colors.black.withValues(alpha: 0.55),
+                barrierDismissible: true,
+                transitionDuration: const Duration(milliseconds: 380),
+                reverseTransitionDuration: const Duration(milliseconds: 320),
+                pageBuilder: (ctx, anim, secAnim) => NowPlayingScreen(
+                  topPadding: topPadding,
+                  image: imageProvider,
+                  title: currentSong.title,
+                  artist: (currentSong.artistParticipants?.isNotEmpty == true
+                          ? currentSong.artistParticipants!
+                              .map((a) => a.name)
+                              .join(', ')
+                          : currentSong.artist) ??
+                      '',
+                  heroTag: 'cover_${currentSong.id}',
+                  song: currentSong,
+                ),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) {
+                  final curved = CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOutCubic,
+                    reverseCurve: Curves.easeInCubic,
+                  );
+                  return FadeTransition(
+                    opacity: CurvedAnimation(
+                      parent: animation,
+                      curve: const Interval(0.0, 0.7, curve: Curves.easeOut),
+                    ),
+                    child: SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(0.0, 0.22),
+                        end: Offset.zero,
+                      ).animate(curved),
+                      child: ScaleTransition(
+                        scale: Tween<double>(begin: 0.94, end: 1.0)
+                            .animate(curved),
+                        child: child,
+                      ),
+                    ),
+                  );
+                },
               ),
             );
           }
@@ -100,92 +127,68 @@ class MiniPlayer extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
-        final bool isGlass = Provider.of<ThemeService>(context).liquidGlass;
-
         final Widget row = _MiniPlayerRow(
+          songId: currentSong?.id,
           title: title,
           subtitle: subtitle,
           coverArt: coverArt,
           isPlayingRadio: isPlayingRadio,
         );
 
-        if (isGlass) {
-          return RepaintBoundary(
-            child: Container(
-              margin: const EdgeInsets.fromLTRB(12, 4, 12, 0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(22),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.18),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: GestureDetector(
-                onTap: handleTap,
-                child: Container(
-                  height: 64,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? const Color(0xF01C1C1E)
-                        : const Color(0xF5FFFFFF),
-                    borderRadius: BorderRadius.circular(22),
-                    border: Border.all(
+        return RepaintBoundary(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(22),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 28.0, sigmaY: 28.0),
+                child: GestureDetector(
+                  onTap: handleTap,
+                  onHorizontalDragEnd: (details) {
+                    final velocity = details.primaryVelocity ?? 0;
+                    if (velocity < -200) {
+                      Provider.of<PlayerProvider>(context, listen: false).skipNext();
+                      HapticFeedback.mediumImpact();
+                    } else if (velocity > 200) {
+                      Provider.of<PlayerProvider>(context, listen: false).skipPrevious();
+                      HapticFeedback.mediumImpact();
+                    }
+                  },
+                  child: Container(
+                    height: 64,
+                    decoration: BoxDecoration(
                       color: isDark
-                          ? Colors.white.withValues(alpha: 0.14)
-                          : Colors.black.withValues(alpha: 0.08),
-                      width: 0.8,
+                          ? const Color(0x991A1A1E)
+                          : const Color(0xAAFFFFFF),
+                      borderRadius: BorderRadius.circular(22),
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.16)
+                            : Colors.black.withValues(alpha: 0.08),
+                        width: 1.0,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.22),
+                          blurRadius: 20,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(child: row),
+                        const Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          child: _MiniPlayerProgressBar(
+                              borderRadius: 22, isGlass: true),
+                        ),
+                      ],
                     ),
                   ),
-                  child: Stack(
-                    children: [
-                      Positioned.fill(child: row),
-                      const Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        child: _MiniPlayerProgressBar(
-                            borderRadius: 22, isGlass: true),
-                      ),
-                    ],
-                  ),
                 ),
-              ),
-            ),
-          );
-        }
-
-        return RepaintBoundary(
-          child: GestureDetector(
-            onTap: handleTap,
-            child: Container(
-              height: 64,
-              decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.black.withValues(alpha: 0.95)
-                    : Colors.white.withValues(alpha: 0.95),
-                border: Border(
-                  top: BorderSide(
-                    color:
-                        isDark ? AppTheme.darkDivider : AppTheme.lightDivider,
-                    width: 0.5,
-                  ),
-                ),
-              ),
-              child: Stack(
-                children: [
-                  Positioned.fill(child: row),
-                  const Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child:
-                        _MiniPlayerProgressBar(borderRadius: 0, isGlass: false),
-                  ),
-                ],
               ),
             ),
           ),
@@ -261,12 +264,14 @@ class _MiniPlayerProgressBar extends StatelessWidget {
 }
 
 class _MiniPlayerRow extends StatelessWidget {
+  final String? songId;
   final String title;
   final String? subtitle;
   final String? coverArt;
   final bool isPlayingRadio;
 
   const _MiniPlayerRow({
+    this.songId,
     required this.title,
     required this.subtitle,
     required this.coverArt,
@@ -295,7 +300,11 @@ class _MiniPlayerRow extends StatelessWidget {
               child: const Icon(Icons.radio, color: Colors.white, size: 24),
             )
           else
-            AlbumArtwork(coverArt: coverArt, size: 44, borderRadius: 6),
+            Hero(
+              tag: songId != null ? 'cover_$songId' : 'mini_cover',
+              child:
+                  AlbumArtwork(coverArt: coverArt, size: 44, borderRadius: 6),
+            ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

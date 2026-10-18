@@ -4,7 +4,6 @@ import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:audio_service/audio_service.dart';
 import 'package:musly/providers/auth_provider.dart';
-import 'package:musly/services/audio_handler.dart';
 import 'package:musly/services/android_auto_settings_service.dart';
 import 'package:musly/services/storage_service.dart';
 import 'package:musly/l10n/app_localizations.dart';
@@ -278,10 +277,6 @@ class AndroidAutoService {
           debugPrint('[AndroidAutoService] Switching server to $desiredServerId');
           final parts = desiredServerId.split('_');
           if (parts.length >= 3) {
-            final family = parts[0];
-            final url = parts[1];
-            final username = parts.sublist(2).join('_');
-            
             final profiles = await StorageService().getSavedProfiles();
             final targetConfig = profiles.where((p) => '${p.serverFamily}_${p.serverUrl}_${p.username}' == desiredServerId).firstOrNull;
             

@@ -7,8 +7,6 @@ import 'package:musly/screens/main/search_screen.dart';
 import 'package:musly/screens/settings/settings_screen.dart';
 import 'package:musly/utils/navigation_helper.dart';
 import 'package:musly/widgets/widgets.dart';
-import 'package:provider/provider.dart';
-import 'package:musly/providers/player_provider.dart';
 import 'package:musly/theme/app_theme.dart';
 import 'package:musly/widgets/navigation/tv_remote_scope.dart';
 

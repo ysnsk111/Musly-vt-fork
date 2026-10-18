@@ -86,7 +86,7 @@ class ThemeService extends ChangeNotifier {
 
   ThemeMode _themeMode = ThemeMode.system;
   AccentColor _accentColor = AccentColor.red;
-  bool _liquidGlass = false;
+  bool _liquidGlass = true;
 
   ThemeMode get themeMode => _themeMode;
   AccentColor get accentColor => _accentColor;
@@ -101,7 +101,7 @@ class ThemeService extends ChangeNotifier {
     final colorKey = prefs.getString(_keyAccentColor) ?? 'red';
     _accentColor = AccentColorExt.fromKey(colorKey);
 
-    _liquidGlass = prefs.getBool(_keyLiquidGlass) ?? false;
+    _liquidGlass = true;
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {

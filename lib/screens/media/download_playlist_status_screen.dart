@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:musly/providers/library_provider.dart';
 import 'package:musly/services/offline_service.dart';
-import 'package:musly/theme/app_theme.dart';
 import 'package:musly/widgets/widgets.dart';
 import 'package:musly/l10n/app_localizations.dart';
 

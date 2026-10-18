@@ -96,10 +96,14 @@ class AuthProvider extends ChangeNotifier {
       final offlineService = OfflineService();
       await offlineService.initialize();
       _hasOfflineContent = offlineService.getDownloadedCount() > 0;
-      _state = AuthState.serverUnreachable;
+      offlineService.setOfflineMode(true);
+      _state = AuthState.offlineMode;
     }
     notifyListeners();
   }
+
+  bool _isRetrying = false;
+  bool get isRetrying => _isRetrying;
 
   void enterOfflineMode() {
     OfflineService().setOfflineMode(true);
@@ -107,10 +111,32 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> retryConnection() async {
-    if (_config == null) return;
-    await _subsonicService.configure(_config!);
-    await _verifyConnection();
+  Future<bool> retryConnection() async {
+    if (_config == null) return false;
+    _isRetrying = true;
+    notifyListeners();
+
+    try {
+      await _subsonicService.configure(_config!);
+      final pingResult = await _subsonicService.pingWithError().timeout(
+            const Duration(seconds: 8),
+            onTimeout: () =>
+                PingResult(success: false, error: 'Connection timed out'),
+          );
+      if (pingResult.success) {
+        final offlineService = OfflineService();
+        offlineService.setOfflineMode(false);
+        _state = AuthState.authenticated;
+        _isRetrying = false;
+        notifyListeners();
+        return true;
+      }
+    } catch (e) {
+      debugPrint('retryConnection error: $e');
+    }
+    _isRetrying = false;
+    notifyListeners();
+    return false;
   }
 
   Future<void> disconnect() async {

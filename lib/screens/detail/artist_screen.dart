@@ -56,7 +56,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
         final artistFuture = subsonicService.getArtist(widget.artistId).catchError((e) {
           debugPrint('[ArtistScreen] getArtist failed: $e – trying fallbacks');
           throw e;
-        }).then((val) => val).catchError((_) => null);
+        }).then<Artist?>((val) => val).catchError((_) => null);
 
         final infoFuture = subsonicService.getArtistInfo(widget.artistId).catchError((_) => null);
         final topSongsFuture = subsonicService.getArtistTopSongs(widget.artistId).catchError((_) => <Song>[]);

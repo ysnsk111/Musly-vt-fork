@@ -17,6 +17,7 @@ import 'package:musly/widgets/settings/settings_icon_badge.dart';
 import 'package:musly/utils/context_extensions.dart';
 
 import 'package:musly/services/crossfade_service.dart';
+import 'package:musly/services/player_ui_settings_service.dart';
 
 class SettingsPlaybackTab extends StatefulWidget {
   const SettingsPlaybackTab({super.key});
@@ -73,7 +74,7 @@ class _SettingsPlaybackTabState extends State<SettingsPlaybackTab> {
         Provider.of<SubsonicService>(context, listen: false).isYoutube;
 
     return ListView(
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.fromLTRB(0, 16, 0, 180),
       children: [
         SettingsSectionCard(
           title: AppLocalizations.of(context)!.sectionAutoDj,
@@ -108,11 +109,184 @@ class _SettingsPlaybackTabState extends State<SettingsPlaybackTab> {
             ],
           ],
         ),
+        const SizedBox(height: 24),
+        _buildAdvancedPlaybackSection(),
         if (!isYoutube) ...[
           const SizedBox(height: 24),
           _buildTranscodingSection(),
         ],
         const SizedBox(height: 40),
+      ],
+    );
+  }
+
+  Widget _buildAdvancedPlaybackSection() {
+    final player = Provider.of<PlayerProvider>(context);
+    final uiSettings = PlayerUiSettingsService();
+    final accent = Theme.of(context).colorScheme.primary;
+
+    return SettingsSectionCard(
+      title: '播放增强与控制 (Salt Player 风格)',
+      children: [
+        SettingsListTile(
+          gradientColors: [accent, accent.withValues(alpha: 0.6)],
+          icon: Icons.speed_rounded,
+          title: '默认播放倍速',
+          subtitle: '当前: ${player.playbackSpeed.toStringAsFixed(2)}x',
+          trailing: DropdownButton<double>(
+            value: [0.75, 1.0, 1.25, 1.5, 2.0].contains(player.playbackSpeed)
+                ? player.playbackSpeed
+                : 1.0,
+            underline: const SizedBox(),
+            items: const [
+              DropdownMenuItem(value: 0.75, child: Text('0.75x')),
+              DropdownMenuItem(value: 1.0, child: Text('1.0x (正常)')),
+              DropdownMenuItem(value: 1.25, child: Text('1.25x')),
+              DropdownMenuItem(value: 1.5, child: Text('1.5x')),
+              DropdownMenuItem(value: 2.0, child: Text('2.0x')),
+            ],
+            onChanged: (spd) {
+              if (spd != null) player.setPlaybackSpeed(spd);
+            },
+          ),
+        ),
+        const SettingsDivider(),
+        SettingsSwitchTile(
+          gradientColors: const [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+          icon: Icons.music_note_rounded,
+          title: AppLocalizations.of(context)!.preservePitch,
+          subtitle: AppLocalizations.of(context)!.preservePitchSubtitle,
+          value: player.pitchCorrection,
+          onChanged: (_) => player.togglePitchCorrection(),
+        ),
+        const SettingsDivider(),
+        ValueListenableBuilder<int>(
+          valueListenable: uiSettings.seekStepSecondsNotifier,
+          builder: (context, seekStep, _) {
+            return SettingsListTile(
+              gradientColors: const [Color(0xFF3B82F6), Color(0xFF06B6D4)],
+              icon: Icons.fast_forward_rounded,
+              title: '快进 / 快退步长',
+              subtitle: '$seekStep 秒',
+              trailing: DropdownButton<int>(
+                value: [5, 10, 15, 30].contains(seekStep) ? seekStep : 10,
+                underline: const SizedBox(),
+                items: const [
+                  DropdownMenuItem(value: 5, child: Text('5 秒')),
+                  DropdownMenuItem(value: 10, child: Text('10 秒 (默认)')),
+                  DropdownMenuItem(value: 15, child: Text('15 秒')),
+                  DropdownMenuItem(value: 30, child: Text('30 秒')),
+                ],
+                onChanged: (v) {
+                  if (v != null) uiSettings.setSeekStepSeconds(v);
+                },
+              ),
+            );
+          },
+        ),
+        const SettingsDivider(),
+        ValueListenableBuilder<bool>(
+          valueListenable: uiSettings.hapticFeedbackNotifier,
+          builder: (context, haptic, _) {
+            return SettingsSwitchTile(
+              gradientColors: const [Color(0xFFF59E0B), Color(0xFFD97706)],
+              icon: Icons.vibration_rounded,
+              title: '触觉震动反馈',
+              subtitle: '在切歌、调节进度与点击控制时提供振动提示',
+              value: haptic,
+              onChanged: (v) => uiSettings.setHapticFeedback(v),
+            );
+          },
+        ),
+        const SettingsDivider(),
+        ValueListenableBuilder<int>(
+          valueListenable: uiSettings.lyricsSyncOffsetMsNotifier,
+          builder: (context, offset, _) {
+            return ListTile(
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              leading: Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.sync_alt_rounded,
+                    color: Color(0xFF10B981), size: 18),
+              ),
+              title: const Text('歌词时序微调预设', style: TextStyle(fontSize: 16)),
+              subtitle: Text(
+                offset == 0
+                    ? '标准同步 (0ms)'
+                    : '${offset > 0 ? '+' : ''}${offset}ms',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppTheme.darkSecondaryText
+                      : AppTheme.lightSecondaryText,
+                ),
+              ),
+              trailing: TextButton(
+                onPressed: () async =>
+                    await uiSettings.setLyricsSyncOffsetMs(0),
+                child: const Text('重置为 0'),
+              ),
+            );
+          },
+        ),
+        const SettingsDivider(),
+        ListTile(
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          leading: Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: const Color(0xFF8B5CF6).withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.bedtime_rounded,
+                color: Color(0xFF8B5CF6), size: 18),
+          ),
+          title: Text(AppLocalizations.of(context)!.sleepTimer,
+              style: const TextStyle(fontSize: 16)),
+          subtitle: Text(
+            player.hasSleepTimer
+                ? (player.sleepTimerRemaining != null
+                    ? '倒计时剩余: ${player.sleepTimerRemaining!.inMinutes} 分钟'
+                    : '本曲目播放完毕后停止')
+                : '未开启',
+            style: TextStyle(
+              fontSize: 13,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? AppTheme.darkSecondaryText
+                  : AppTheme.lightSecondaryText,
+            ),
+          ),
+          trailing: DropdownButton<int>(
+            value: player.hasSleepTimer ? (player.sleepTimerRemaining?.inMinutes ?? -1) : 0,
+            underline: const SizedBox(),
+            items: const [
+              DropdownMenuItem(value: 0, child: Text('关闭')),
+              DropdownMenuItem(value: 15, child: Text('15 分钟')),
+              DropdownMenuItem(value: 30, child: Text('30 分钟')),
+              DropdownMenuItem(value: 45, child: Text('45 分钟')),
+              DropdownMenuItem(value: 60, child: Text('60 分钟')),
+              DropdownMenuItem(value: -1, child: Text('本曲播完')),
+            ],
+            onChanged: (mins) {
+              if (mins == null) return;
+              if (mins == 0) {
+                player.cancelSleepTimer();
+              } else if (mins == -1) {
+                player.setSleepTimer(Duration.zero, endCurrentSong: true, fadeOut: true);
+              } else {
+                player.setSleepTimer(Duration(minutes: mins), fadeOut: true);
+              }
+            },
+          ),
+        ),
       ],
     );
   }

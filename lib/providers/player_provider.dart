@@ -810,6 +810,8 @@ class PlayerProvider extends ChangeNotifier with WidgetsBindingObserver implemen
     return remaining.isNegative ? Duration.zero : remaining;
   }
 
+  void cancelSleepTimer() => setSleepTimer(Duration.zero);
+
   void setSleepTimer(
     Duration duration, {
     bool endCurrentSong = false,

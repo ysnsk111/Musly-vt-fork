@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
+import android.os.Bundle
+import androidx.core.view.WindowCompat
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
 import com.ryanheise.audioservice.AudioServiceFragmentActivity
@@ -18,6 +20,18 @@ import kotlinx.coroutines.withContext
 class MainActivity : AudioServiceFragmentActivity() {
     private val CHANNEL = "com.devid.musly/ytdlp"
     private val TV_CHANNEL = "com.devid.musly/tv_mode"
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Enable Edge-to-Edge full screen support
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+            window.isStatusBarContrastEnforced = false
+        }
+        window.navigationBarColor = android.graphics.Color.TRANSPARENT
+        window.statusBarColor = android.graphics.Color.TRANSPARENT
+    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

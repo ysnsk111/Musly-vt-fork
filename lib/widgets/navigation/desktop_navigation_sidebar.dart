@@ -12,7 +12,6 @@ import 'package:musly/screens/media/radio_screen.dart';
 import 'package:musly/screens/settings/settings_screen.dart';
 import 'package:musly/widgets/common/playlist_artwork.dart';
 import 'tv_remote_scope.dart';
-import '../../services/tv_detection_service.dart';
 
 class DesktopNavigationSidebar extends StatefulWidget {
   final int selectedIndex;

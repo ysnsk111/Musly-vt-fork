@@ -46,6 +46,12 @@ class PlayerUiSettingsService {
   final ValueNotifier<bool> lyricsGlowEffectNotifier = ValueNotifier(true);
   final ValueNotifier<bool> showLiveLyricUnderArtworkNotifier =
       ValueNotifier(false);
+  static const String _keyLyricsSyncOffsetMs = 'lyrics_sync_offset_ms';
+  final ValueNotifier<int> lyricsSyncOffsetMsNotifier = ValueNotifier(0);
+  static const String _keySeekStepSeconds = 'player_seek_step_seconds';
+  final ValueNotifier<int> seekStepSecondsNotifier = ValueNotifier(10);
+  static const String _keyHapticFeedback = 'player_haptic_feedback';
+  final ValueNotifier<bool> hapticFeedbackNotifier = ValueNotifier(true);
 
   Future<void> initialize() async {
     _prefs ??= await SharedPreferences.getInstance();
@@ -64,6 +70,9 @@ class PlayerUiSettingsService {
     lyricsAlignmentNotifier.value = getLyricsAlignment();
     lyricsGlowEffectNotifier.value = getLyricsGlowEffect();
     showLiveLyricUnderArtworkNotifier.value = getShowLiveLyricUnderArtwork();
+    lyricsSyncOffsetMsNotifier.value = getLyricsSyncOffsetMs();
+    seekStepSecondsNotifier.value = getSeekStepSeconds();
+    hapticFeedbackNotifier.value = getHapticFeedback();
   }
 
   Future<void> setShowLiveLyricUnderArtwork(bool show) async {
@@ -216,6 +225,36 @@ class PlayerUiSettingsService {
     return _prefs?.getBool(_keyLyricsGlowEffect) ?? true;
   }
 
+  Future<void> setLyricsSyncOffsetMs(int offsetMs) async {
+    await initialize();
+    await _prefs!.setInt(_keyLyricsSyncOffsetMs, offsetMs);
+    lyricsSyncOffsetMsNotifier.value = offsetMs;
+  }
+
+  int getLyricsSyncOffsetMs() {
+    return _prefs?.getInt(_keyLyricsSyncOffsetMs) ?? 0;
+  }
+
+  Future<void> setSeekStepSeconds(int seconds) async {
+    await initialize();
+    await _prefs!.setInt(_keySeekStepSeconds, seconds);
+    seekStepSecondsNotifier.value = seconds;
+  }
+
+  int getSeekStepSeconds() {
+    return _prefs?.getInt(_keySeekStepSeconds) ?? 10;
+  }
+
+  Future<void> setHapticFeedback(bool enabled) async {
+    await initialize();
+    await _prefs!.setBool(_keyHapticFeedback, enabled);
+    hapticFeedbackNotifier.value = enabled;
+  }
+
+  bool getHapticFeedback() {
+    return _prefs?.getBool(_keyHapticFeedback) ?? true;
+  }
+
   void dispose() {
     showStarRatingsNotifier.dispose();
     showMiniPlayerHeartNotifier.dispose();
@@ -230,5 +269,8 @@ class PlayerUiSettingsService {
     lyricsBlurUnfocusedNotifier.dispose();
     lyricsAlignmentNotifier.dispose();
     lyricsGlowEffectNotifier.dispose();
+    lyricsSyncOffsetMsNotifier.dispose();
+    seekStepSecondsNotifier.dispose();
+    hapticFeedbackNotifier.dispose();
   }
 }

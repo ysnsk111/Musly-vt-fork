@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -16,8 +15,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get emulatorDetected => 'Emulator Detected';
 
   @override
-  String get emulatorNotAllowed =>
-      'This app cannot run on an emulator.\\nPlease use a physical device.';
+  String get emulatorNotAllowed => 'This app cannot run on an emulator.\\nPlease use a physical device.';
 
   @override
   String get goodMorning => 'Buon giorno';
@@ -65,8 +63,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get noContentAvailable => 'Nessun contenuto disponibile';
 
   @override
-  String get tryRefreshing =>
-      'Prova ad aggiornare o controlla la connessione al server';
+  String get tryRefreshing => 'Prova ad aggiornare o controlla la connessione al server';
 
   @override
   String get refresh => 'Aggiorna';
@@ -104,8 +101,7 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get serverUrlMustStartWith =>
-      'L\'URL del server deve iniziare con http:// o https://';
+  String get serverUrlMustStartWith => 'L\'URL del server deve iniziare con http:// o https://';
 
   @override
   String get failedToConnect => 'Connessione fallita';
@@ -371,8 +367,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get showVolumeSlider => 'Mostra Cursore Del Volume';
 
   @override
-  String get showVolumeSliderSubtitle =>
-      'Visualizza il controllo del volume nella schermata Ora in riproduzione';
+  String get showVolumeSliderSubtitle => 'Visualizza il controllo del volume nella schermata Ora in riproduzione';
 
   @override
   String get showStarRatings => 'Mostra Valutazioni Stella';
@@ -390,8 +385,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get showMiniPlayerRepeat => 'Show Repeat Button';
 
   @override
-  String get showMiniPlayerRepeatSubtitle =>
-      'Toggle repeat mode from mini player';
+  String get showMiniPlayerRepeatSubtitle => 'Toggle repeat mode from mini player';
 
   @override
   String get showMiniPlayerShuffle => 'Show Shuffle Button';
@@ -403,8 +397,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get enableRecommendations => 'Attiva Raccomandazioni';
 
   @override
-  String get enableRecommendationsSubtitle =>
-      'Ottieni suggerimenti musicali personalizzati';
+  String get enableRecommendationsSubtitle => 'Ottieni suggerimenti musicali personalizzati';
 
   @override
   String get listeningData => 'Dati Di Ascolto';
@@ -418,8 +411,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get clearListeningHistory => 'Cancella Cronologia Ascolti';
 
   @override
-  String get confirmClearHistory =>
-      'Questo resetterà tutti i tuoi dati di ascolto e i tuoi consigli. Sei sicuro?';
+  String get confirmClearHistory => 'Questo resetterà tutti i tuoi dati di ascolto e i tuoi consigli. Sei sicuro?';
 
   @override
   String get historyCleared => 'Cronologia di ascolto cancellata';
@@ -428,8 +420,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get discordStatus => 'Stato Discord';
 
   @override
-  String get discordStatusSubtitle =>
-      'Mostra il brano in riproduzione sul profilo Discord';
+  String get discordStatusSubtitle => 'Mostra il brano in riproduzione sul profilo Discord';
 
   @override
   String get selectLanguage => 'Seleziona lingua';
@@ -441,19 +432,16 @@ class AppLocalizationsIt extends AppLocalizations {
   String get communityTranslations => 'Traduzioni da Community';
 
   @override
-  String get communityTranslationsSubtitle =>
-      'Aiuta a tradurre Musly su Crowdin';
+  String get communityTranslationsSubtitle => 'Aiuta a tradurre Musly su Crowdin';
 
   @override
   String get checkTranslationUpdates => 'Controlla aggiornamenti traduzioni';
 
   @override
-  String get checkTranslationUpdatesSubtitle =>
-      'Sincronizza le ultime traduzioni della community in tempo reale (OTA)';
+  String get checkTranslationUpdatesSubtitle => 'Sincronizza le ultime traduzioni della community in tempo reale (OTA)';
 
   @override
-  String get checkingTranslationUpdates =>
-      'Controllo aggiornamenti traduzioni in corso…';
+  String get checkingTranslationUpdates => 'Controllo aggiornamenti traduzioni in corso…';
 
   @override
   String get translationsUpdated => 'Traduzioni aggiornate con successo!';
@@ -495,8 +483,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get mergeLocalLibrary => 'Merge with Server Library';
 
   @override
-  String get mergeLocalLibrarySubtitle =>
-      'Show local music alongside your server library';
+  String get mergeLocalLibrarySubtitle => 'Show local music alongside your server library';
 
   @override
   String get localMusicStats => 'Local Music Files';
@@ -511,8 +498,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get localLibraryEmpty => 'Your library is empty';
 
   @override
-  String get localLibraryEmptySubtitle =>
-      'No local music files were found. Tap the button below to scan again.';
+  String get localLibraryEmptySubtitle => 'No local music files were found. Tap the button below to scan again.';
 
   @override
   String get libraryEmpty => 'Your library is empty';
@@ -591,8 +577,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get liveSearch => 'Ricerca Live';
 
   @override
-  String get liveSearchSubtitle =>
-      'Aggiorna i risultati mentre digiti invece di mostrare un menu a tendina';
+  String get liveSearchSubtitle => 'Aggiorna i risultati mentre digiti invece di mostrare un menu a tendina';
 
   @override
   String get categoryMadeForYou => 'Fatte Per Te';
@@ -679,8 +664,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get format => 'Formato';
 
   @override
-  String get transcodingSubtitle =>
-      'Riduce l\'utilizzo dei dati con qualità inferiore';
+  String get transcodingSubtitle => 'Riduce l\'utilizzo dei dati con qualità inferiore';
 
   @override
   String get modeOff => 'Off';
@@ -733,8 +717,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get sectionAccount => 'ACCOUNT';
 
   @override
-  String get logoutConfirmation =>
-      'Sei sicuro di voler uscire? Questo cancellerà tutti i dati memorizzati nella cache.';
+  String get logoutConfirmation => 'Sei sicuro di voler uscire? Questo cancellerà tutti i dati memorizzati nella cache.';
 
   @override
   String get sectionCacheSettings => 'IMPOSTAZIONI CACHE';
@@ -789,15 +772,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get keepScreenOnDuringDownload => 'Keep Screen On';
 
   @override
-  String get keepScreenOnDuringDownloadSubtitle =>
-      'Prevents download from failing when device locks';
+  String get keepScreenOnDuringDownloadSubtitle => 'Prevents download from failing when device locks';
 
   @override
   String get parallelDownloads => 'Parallel Downloads';
 
   @override
-  String get parallelDownloadsSubtitle =>
-      'Download multiple songs simultaneously';
+  String get parallelDownloadsSubtitle => 'Download multiple songs simultaneously';
 
   @override
   String get downloadSingular => 'download';
@@ -821,8 +802,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get downloadsDeleted => 'Tutti i download eliminati';
 
   @override
-  String get noSongsAvailable =>
-      'Nessun brano disponibile. Carica prima la tua libreria.';
+  String get noSongsAvailable => 'Nessun brano disponibile. Carica prima la tua libreria.';
 
   @override
   String get sectionBpmAnalysis => 'ANALISI BPM';
@@ -917,8 +897,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get removeDownload => 'Rimuovi download';
 
   @override
-  String get removeDownloadConfirm =>
-      'Rimuovere questa canzone dalla memoria offline?';
+  String get removeDownloadConfirm => 'Rimuovere questa canzone dalla memoria offline?';
 
   @override
   String get downloadRemoved => 'Download rimosso';
@@ -1082,15 +1061,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get copyStreamUrl => 'Copia URL streaming';
 
   @override
-  String get failedToLoadRadioStations =>
-      'Impossibile caricare le stazioni radio';
+  String get failedToLoadRadioStations => 'Impossibile caricare le stazioni radio';
 
   @override
   String get noRadioStations => 'Nessuna stazione radio';
 
   @override
-  String get noRadioStationsHint =>
-      'Aggiungi stazioni radio nelle impostazioni del tuo server Navidrome per vederle qui.';
+  String get noRadioStationsHint => 'Aggiungi stazioni radio nelle impostazioni del tuo server Navidrome per vederle qui.';
 
   @override
   String get connectToServerSubtitle => 'Connettiti al tuo server Subsonic';
@@ -1117,8 +1094,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get allowSelfSignedCerts => 'Consenti Certificati Auto-Firmati';
 
   @override
-  String get allowSelfSignedSubtitle =>
-      'Per server con certificati TLS/SSL personalizzati';
+  String get allowSelfSignedSubtitle => 'Per server con certificati TLS/SSL personalizzati';
 
   @override
   String get advancedOptions => 'Opzioni Avanzate';
@@ -1127,8 +1103,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get customTlsCertificate => 'Certificato TLS/Ssl Personalizzato';
 
   @override
-  String get customCertificateSubtitle =>
-      'Carica un certificato personalizzato per server con CA non standard';
+  String get customCertificateSubtitle => 'Carica un certificato personalizzato per server con CA non standard';
 
   @override
   String get selectCertificateFile => 'Seleziona il file del certificato';
@@ -1137,8 +1112,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get clientCertificate => 'Certificato Client (mTLS)';
 
   @override
-  String get clientCertificateSubtitle =>
-      'Autenticare questo client utilizzando un certificato (richiede un server abilitato per mTLS)';
+  String get clientCertificateSubtitle => 'Autenticare questo client utilizzando un certificato (richiede un server abilitato per mTLS)';
 
   @override
   String get selectClientCertificate => 'Seleziona Certificato Client';
@@ -1167,8 +1141,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get storagePermissionRequired => 'Permesso di archiviazione richiesto';
 
   @override
-  String get noMusicFilesFound =>
-      'Nessun file musicale trovato sul tuo dispositivo';
+  String get noMusicFilesFound => 'Nessun file musicale trovato sul tuo dispositivo';
 
   @override
   String get remove => 'Rimuovi';
@@ -1205,8 +1178,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get failedToLoadLyrics => 'Impossibile caricare i testi';
 
   @override
-  String get lyricsNotFoundSubtitle =>
-      'Impossibile trovare il testo di questa canzone';
+  String get lyricsNotFoundSubtitle => 'Impossibile trovare il testo di questa canzone';
 
   @override
   String get backToCurrent => 'Torna al corrente';
@@ -1230,15 +1202,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get localFilesModeBanner => 'Modalità File Locali';
 
   @override
-  String get offlineModeBanner =>
-      'Modalità offline – Solo riproduzione di musica scaricata';
+  String get offlineModeBanner => 'Modalità offline – Solo riproduzione di musica scaricata';
 
   @override
   String get updateAvailable => 'Aggiornamento disponibile';
 
   @override
-  String get updateAvailableSubtitle =>
-      'Una nuova versione di Musly è disponibile!';
+  String get updateAvailableSubtitle => 'Una nuova versione di Musly è disponibile!';
 
   @override
   String updateCurrentVersion(String version) {
@@ -1293,8 +1263,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get searchingDevices => 'Ricerca di dispositivi in corso';
 
   @override
-  String get castWifiHint =>
-      'Assicurati che il tuo dispositivo Cast / DLNA\nsia sulla stessa rete Wi-Fi';
+  String get castWifiHint => 'Assicurati che il tuo dispositivo Cast / DLNA\nsia sulla stessa rete Wi-Fi';
 
   @override
   String connectedToDevice(String name) {
@@ -1350,8 +1319,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get jukeboxMode => 'Modalità Jukebox';
 
   @override
-  String get jukeboxModeSubtitle =>
-      'Riproduci l\'audio tramite il server invece di questo dispositivo';
+  String get jukeboxModeSubtitle => 'Riproduci l\'audio tramite il server invece di questo dispositivo';
 
   @override
   String get openJukeboxController => 'Apri Controller Jukebox';
@@ -1381,15 +1349,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get addToJukeboxQueue => 'Aggiungi alla coda di Jukebox';
 
   @override
-  String get jukeboxNotSupported =>
-      'La modalità Jukebox non è supportata da questo server. Abilitarla nella configurazione del server (ad es. EnableJukebox = true in Navidrome).';
+  String get jukeboxNotSupported => 'La modalità Jukebox non è supportata da questo server. Abilitarla nella configurazione del server (ad es. EnableJukebox = true in Navidrome).';
 
   @override
   String get musicFoldersDialogTitle => 'Seleziona Cartelle Musicali';
 
   @override
-  String get musicFoldersHint =>
-      'Lascia tutto abilitato per usare tutte le cartelle (predefinito).';
+  String get musicFoldersHint => 'Lascia tutto abilitato per usare tutte le cartelle (predefinito).';
 
   @override
   String get musicFoldersSaved => 'Selezione di cartelle musicali salvata';
@@ -1401,8 +1367,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get artworkCornerRadius => 'Raggio Angoli';
 
   @override
-  String get artworkCornerRadiusSubtitle =>
-      'Regola come appaiono gli angoli delle copertine degli album';
+  String get artworkCornerRadiusSubtitle => 'Regola come appaiono gli angoli delle copertine degli album';
 
   @override
   String get artworkCornerRadiusNone => 'Nessuno';
@@ -1458,8 +1423,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get serverUnreachableTitle => 'Impossibile raggiungere il server';
 
   @override
-  String get serverUnreachableSubtitle =>
-      'Controllare la connessione o le impostazioni del server.';
+  String get serverUnreachableSubtitle => 'Controllare la connessione o le impostazioni del server.';
 
   @override
   String get openOfflineMode => 'Apri in modalità offline';
@@ -1477,8 +1441,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get circularDesignLabel => 'Design Circolare';
 
   @override
-  String get circularDesignSubtitle =>
-      'UI galleggiante e arrotondata con pannelli traslucidi ed effetto sfocatura di vetro sul lettore e sulla barra di navigazione.';
+  String get circularDesignSubtitle => 'UI galleggiante e arrotondata con pannelli traslucidi ed effetto sfocatura di vetro sul lettore e sulla barra di navigazione.';
 
   @override
   String get themeModeSystem => 'Sistema';
@@ -1496,8 +1459,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get discordStatusText => 'Stato di Discord';
 
   @override
-  String get discordStatusTextSubtitle =>
-      'Seconda riga mostrata nell\'attività di Discord';
+  String get discordStatusTextSubtitle => 'Seconda riga mostrata nell\'attività di Discord';
 
   @override
   String get discordRpcStyleArtist => 'Nome artista';
@@ -1509,8 +1471,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get discordRpcStyleApp => 'Nome app (Musly)';
 
   @override
-  String get sectionVolumeNormalization =>
-      'NORMALIZZAZIONE VOLUME (REPLAYGAIN)';
+  String get sectionVolumeNormalization => 'NORMALIZZAZIONE VOLUME (REPLAYGAIN)';
 
   @override
   String get sectionFadeInOut => 'FADE IN/OUT';
@@ -1557,15 +1518,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get transcodingEnable => 'Abilita La Transcodifica';
 
   @override
-  String get transcodingEnableSubtitle =>
-      'Riduce l\'utilizzo dei dati con qualità inferiore';
+  String get transcodingEnableSubtitle => 'Riduce l\'utilizzo dei dati con qualità inferiore';
 
   @override
   String get smartTranscoding => 'Trascodifica Intelligente';
 
   @override
-  String get smartTranscodingSubtitle =>
-      'Regola automaticamente la qualità in base alla tua connessione (WiFi vs dati mobili)';
+  String get smartTranscodingSubtitle => 'Regola automaticamente la qualità in base alla tua connessione (WiFi vs dati mobili)';
 
   @override
   String get smartTranscodingDetectedNetwork => 'Rete rilevata: ';
@@ -1579,8 +1538,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get transcodingWifiQuality => 'Qualità WiFi';
 
   @override
-  String get transcodingWifiQualitySubtitleSmart =>
-      'Usato automaticamente su WiFi';
+  String get transcodingWifiQualitySubtitleSmart => 'Usato automaticamente su WiFi';
 
   @override
   String get transcodingWifiQualitySubtitle => 'Bitrate quando su WiFi';
@@ -1589,19 +1547,16 @@ class AppLocalizationsIt extends AppLocalizations {
   String get transcodingMobileQuality => 'Qualità Mobile';
 
   @override
-  String get transcodingMobileQualitySubtitleSmart =>
-      'Utilizzato automaticamente su dati cellulari';
+  String get transcodingMobileQualitySubtitleSmart => 'Utilizzato automaticamente su dati cellulari';
 
   @override
-  String get transcodingMobileQualitySubtitle =>
-      'Bitrate quando su dati mobili';
+  String get transcodingMobileQualitySubtitle => 'Bitrate quando su dati mobili';
 
   @override
   String get transcodingFormat => 'Formato';
 
   @override
-  String get transcodingFormatSubtitle =>
-      'Codec audio utilizzato per lo streaming';
+  String get transcodingFormatSubtitle => 'Codec audio utilizzato per lo streaming';
 
   @override
   String get transcodingBitrateOriginal => 'Originale (Nessuna Transcodifica)';
@@ -1667,8 +1622,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get anonymousAnalytics => 'Anonymous Analytics';
 
   @override
-  String get anonymousAnalyticsSubtitle =>
-      'Help improve Musly with anonymous crash reports and usage stats';
+  String get anonymousAnalyticsSubtitle => 'Help improve Musly with anonymous crash reports and usage stats';
 
   @override
   String get deviceId => 'Device ID';
@@ -1679,34 +1633,28 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get deviceIdDisabled =>
-      'Enable analytics to see your anonymous device ID';
+  String get deviceIdDisabled => 'Enable analytics to see your anonymous device ID';
 
   @override
   String get aboutDeviceId => 'About Device ID';
 
   @override
-  String get aboutDeviceIdSubtitle =>
-      'This is an anonymous identifier generated by the app. It cannot be linked to your personal identity and is used only for analytics.';
+  String get aboutDeviceIdSubtitle => 'This is an anonymous identifier generated by the app. It cannot be linked to your personal identity and is used only for analytics.';
 
   @override
   String get supportGreeting => 'Ciao!';
 
   @override
-  String get supportParagraph1 =>
-      'Sono Devid, lo sviluppatore di Musly. Ho creato questa app perché amo la musica e credo che tutti meritino un lettore musicale bellissimo e gratuito.';
+  String get supportParagraph1 => 'Sono Devid, lo sviluppatore di Musly. Ho creato questa app perché amo la musica e credo che tutti meritino un lettore musicale bellissimo e gratuito.';
 
   @override
-  String get supportParagraph2 =>
-      'Musly è completamente gratuito e open-source. Nessuna pubblicità, nessun abbonamento. Ci lavoro nel tempo libero perché mi piace davvero creare qualcosa di utile per persone come te.';
+  String get supportParagraph2 => 'Musly è completamente gratuito e open-source. Nessuna pubblicità, nessun abbonamento. Ci lavoro nel tempo libero perché mi piace davvero creare qualcosa di utile per persone come te.';
 
   @override
-  String get supportParagraph3 =>
-      'Ma server, strumenti di sviluppo e caffè non sono gratis Se Musly è diventato parte della tua giornata e vuoi dire \"grazie\", una piccola donazione significherebbe tantissimo per me. Aiuta a coprire i costi e mi motiva ad aggiungere nuove funzionalità.';
+  String get supportParagraph3 => 'Ma server, strumenti di sviluppo e caffè non sono gratis Se Musly è diventato parte della tua giornata e vuoi dire \"grazie\", una piccola donazione significherebbe tantissimo per me. Aiuta a coprire i costi e mi motiva ad aggiungere nuove funzionalità.';
 
   @override
-  String get supportParagraph4 =>
-      'Ma nessuna pressione - il fatto che ti piaccia l\'app è già la migliore ricompensa!';
+  String get supportParagraph4 => 'Ma nessuna pressione - il fatto che ti piaccia l\'app è già la migliore ricompensa!';
 
   @override
   String get supportDonationTitle => 'Supporta con una Donazione';
@@ -1718,8 +1666,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get supportDiscordTitle => 'Unisciti al nostro Discord';
 
   @override
-  String get supportDiscordSubtitle =>
-      'Ottieni aiuto, suggerisci funzionalità o chiacchiera';
+  String get supportDiscordSubtitle => 'Ottieni aiuto, suggerisci funzionalità o chiacchiera';
 
   @override
   String get supportWaysTitle => 'Altri modi per supportare';
@@ -1824,8 +1771,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get enableLrcLibFallback => 'Fetch lyrics from LRCLIB';
 
   @override
-  String get lrcLibFallbackSubtitle =>
-      'Automatically search LRCLIB for lyrics when your server does not provide them';
+  String get lrcLibFallbackSubtitle => 'Automatically search LRCLIB for lyrics when your server does not provide them';
 
   @override
   String get themeSaved => 'Theme saved';
@@ -1837,8 +1783,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get themeUnsavedChangesTitle => 'Unsaved Changes';
 
   @override
-  String get themeUnsavedChangesBody =>
-      'You have unsaved changes. Do you want to save before leaving?';
+  String get themeUnsavedChangesBody => 'You have unsaved changes. Do you want to save before leaving?';
 
   @override
   String get discard => 'Discard';
@@ -1875,8 +1820,7 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get audioFocusDenied =>
-      'Couldn\'t start playback — another app has audio focus';
+  String get audioFocusDenied => 'Couldn\'t start playback — another app has audio focus';
 
   @override
   String get addToLibrary => 'Add to Library';
@@ -1900,8 +1844,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get currentlyPlayingOn => 'In Riproduzione Su';
 
   @override
-  String get noDevicesFound =>
-      'Nessun altro dispositivo Musly trovato sulla tua rete Wi-Fi.';
+  String get noDevicesFound => 'Nessun altro dispositivo Musly trovato sulla tua rete Wi-Fi.';
 
   @override
   String get transferPlaybackHere => 'Trasferisci la riproduzione qui';
@@ -1915,8 +1858,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get muslyBeatSync => 'Musly BeatSync';
 
   @override
-  String get beatSyncSubtitle =>
-      'Sincronizza più telefoni e computer su Wi-Fi come altoparlanti surround per le feste con precisione al millisecondo.';
+  String get beatSyncSubtitle => 'Sincronizza più telefoni e computer su Wi-Fi come altoparlanti surround per le feste con precisione al millisecondo.';
 
   @override
   String get hostParty => 'Crea Party';
@@ -1931,8 +1873,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get audioPhaseCalibration => 'Calibrazione Fase Audio';
 
   @override
-  String get phaseCalibrationSubtitle =>
-      'Regola per compensare la latenza di cuffie o altoparlanti Bluetooth.';
+  String get phaseCalibrationSubtitle => 'Regola per compensare la latenza di cuffie o altoparlanti Bluetooth.';
 
   @override
   String get partySpeakers => 'Altoparlanti Party';
@@ -1953,8 +1894,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get milestone50SongsBadge => '50 BRANI ASCOLTATI';
 
   @override
-  String get milestone50SongsMessage =>
-      'Hai appena raggiunto il traguardo di 50 brani ascoltati su Musly! Grazie per aver scelto quest\'app per accompagnare la tua passione musicale ogni giorno.';
+  String get milestone50SongsMessage => 'Hai appena raggiunto il traguardo di 50 brani ascoltati su Musly! Grazie per aver scelto quest\'app per accompagnare la tua passione musicale ogni giorno.';
 
   @override
   String get continueListening => 'Continua ad ascoltare';
@@ -1963,8 +1903,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get lyricsUnderArtwork => 'Testo sotto la copertina';
 
   @override
-  String get lyricsUnderArtworkSubtitle =>
-      'Mostra la riga sincronizzata corrente del testo sotto la copertina nel player a schermo intero';
+  String get lyricsUnderArtworkSubtitle => 'Mostra la riga sincronizzata corrente del testo sotto la copertina nel player a schermo intero';
 
   @override
   String get lyricsDisplaySection => 'VISUALIZZAZIONE TESTO';
@@ -1973,8 +1912,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get lyricsBlurUnfocused => 'Sfoca testo non attivo';
 
   @override
-  String get lyricsBlurUnfocusedSubtitle =>
-      'Aggiunge un effetto di sfocatura alle righe del testo precedenti e successive';
+  String get lyricsBlurUnfocusedSubtitle => 'Aggiunge un effetto di sfocatura alle righe del testo precedenti e successive';
 
   @override
   String get lyricsAlignment => 'Allineamento testo';
@@ -1995,16 +1933,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get lyricsGlowEffect => 'Bagliore riga attiva';
 
   @override
-  String get lyricsGlowEffectSubtitle =>
-      'Effetto di bagliore sottile sulla riga del testo attualmente in riproduzione';
+  String get lyricsGlowEffectSubtitle => 'Effetto di bagliore sottile sulla riga del testo attualmente in riproduzione';
 
   @override
-  String get hideWindowTitlebar =>
-      'Nascondi barra del titolo / decorazioni della finestra';
+  String get hideWindowTitlebar => 'Nascondi barra del titolo / decorazioni della finestra';
 
   @override
-  String get hideWindowTitlebarSubtitle =>
-      'Nasconde la barra del titolo nativa (utile per Linux Wayland e tiling window manager)';
+  String get hideWindowTitlebarSubtitle => 'Nasconde la barra del titolo nativa (utile per Linux Wayland e tiling window manager)';
 
   @override
   String get sectionSmartCrossfade => 'SMART CROSSFADE';
@@ -2117,8 +2052,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get loadingLibrary => 'Caricamento libreria in corso...';
 
   @override
-  String get libraryEmptyError =>
-      'La libreria sembra vuota o non è stato possibile caricarla. Assicurati che il tuo server supporti la scansione completa della libreria.';
+  String get libraryEmptyError => 'La libreria sembra vuota o non è stato possibile caricarla. Assicurati che il tuo server supporti la scansione completa della libreria.';
 
   @override
   String get serverStatusConnected => 'CONNESSO';
@@ -2151,22 +2085,19 @@ class AppLocalizationsIt extends AppLocalizations {
   String get welcomeTourTitle => 'Tour di benvenuto';
 
   @override
-  String get welcomeTourSubtitle =>
-      'Rivedi l\'esperienza introduttiva iniziale';
+  String get welcomeTourSubtitle => 'Rivedi l\'esperienza introduttiva iniziale';
 
   @override
   String get muslyPlaybackDev => 'Anteprima Playback (Modalità Test)';
 
   @override
-  String get muslyPlaybackDevSubtitle =>
-      'Esplora direttamente l\'anteprima del tuo Year-in-Review senza attendere novembre';
+  String get muslyPlaybackDevSubtitle => 'Esplora direttamente l\'anteprima del tuo Year-in-Review senza attendere novembre';
 
   @override
   String get muslyPlaybackAnnual => 'Musly Playback';
 
   @override
-  String get muslyPlaybackAnnualSubtitle =>
-      'Il tuo Year-in-Review annuale si sblocca automaticamente ogni anno tra fine novembre e metà gennaio.\n\nContinua ad ascoltare musica per espandere il tuo universo sonoro!';
+  String get muslyPlaybackAnnualSubtitle => 'Il tuo Year-in-Review annuale si sblocca automaticamente ogni anno tra fine novembre e metà gennaio.\n\nContinua ad ascoltare musica per espandere il tuo universo sonoro!';
 
   @override
   String get sectionAboutSupport => 'SUPPORTO';
@@ -2210,8 +2141,7 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get devPlaybackUnlocked =>
-      'Anteprima sviluppatore di Playback sbloccata!';
+  String get devPlaybackUnlocked => 'Anteprima sviluppatore di Playback sbloccata!';
 
   @override
   String get craftedWith => 'Creato con ';
@@ -2223,8 +2153,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get switchServerTitle => 'Cambia server';
 
   @override
-  String get switchServerSubtitle =>
-      'Seleziona un server attivo o una sorgente di streaming';
+  String get switchServerSubtitle => 'Seleziona un server attivo o una sorgente di streaming';
 
   @override
   String get addServerButton => 'Aggiungi server';
@@ -2263,22 +2192,19 @@ class AppLocalizationsIt extends AppLocalizations {
   String get noPlaylistsFound => 'Nessuna playlist trovata';
 
   @override
-  String get supportDialogDescription =>
-      'Musly è un progetto gratuito e open-source. Il tuo supporto aiuta a mantenerlo vivo!';
+  String get supportDialogDescription => 'Musly è un progetto gratuito e open-source. Il tuo supporto aiuta a mantenerlo vivo!';
 
   @override
   String get supportDialogJoinDiscord => 'Unisciti al nostro Discord';
 
   @override
-  String get supportDialogDiscordSubtitle =>
-      'Ottieni aiuto, suggerisci funzionalità, chatta con noi';
+  String get supportDialogDiscordSubtitle => 'Ottieni aiuto, suggerisci funzionalità, chatta con noi';
 
   @override
   String get supportDialogDonateTitle => 'Supporta con una donazione';
 
   @override
-  String get supportDialogDonateSubtitle =>
-      'Aiuta a coprire i costi dei server e dello sviluppo';
+  String get supportDialogDonateSubtitle => 'Aiuta a coprire i costi dei server e dello sviluppo';
 
   @override
   String get dontShowAgain => 'Non mostrare più';
@@ -2343,8 +2269,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get downloadedTapToRemove => 'Scaricato — tocca per rimuovere';
 
   @override
-  String get downloadingTapToCancel =>
-      'Download in corso — tocca per annullare';
+  String get downloadingTapToCancel => 'Download in corso — tocca per annullare';
 
   @override
   String get removeDownloadsTitle => 'Rimuovere i download?';
@@ -2458,15 +2383,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get enableMuslyConnect => 'Abilita Musly Connect';
 
   @override
-  String get enableMuslyConnectSubtitle =>
-      'Rileva i dispositivi vicini tramite Wi-Fi per il controllo remoto e le sessioni di ascolto';
+  String get enableMuslyConnectSubtitle => 'Rileva i dispositivi vicini tramite Wi-Fi per il controllo remoto e le sessioni di ascolto';
 
   @override
   String get availableDevices => 'Dispositivi disponibili';
 
   @override
-  String get lanDiscoveryActive =>
-      'Rilevamento LAN attivo • Nessun dispositivo nelle vicinanze';
+  String get lanDiscoveryActive => 'Rilevamento LAN attivo • Nessun dispositivo nelle vicinanze';
 
   @override
   String nearbyDevicesFound(int count) {
@@ -2495,29 +2418,25 @@ class AppLocalizationsIt extends AppLocalizations {
   String get noDataSellingTitle => 'Nessuna Vendita di Dati';
 
   @override
-  String get noDataSellingDescription =>
-      'Non vendiamo, condividiamo né cediamo mai i tuoi dati personali a terzi.';
+  String get noDataSellingDescription => 'Non vendiamo, condividiamo né cediamo mai i tuoi dati personali a terzi.';
 
   @override
   String get localFirstStorageTitle => 'Salvataggio Locale sul Dispositivo';
 
   @override
-  String get localFirstStorageDescription =>
-      'La tua libreria musicale e le credenziali rimangono sul tuo dispositivo.';
+  String get localFirstStorageDescription => 'La tua libreria musicale e le credenziali rimangono sul tuo dispositivo.';
 
   @override
   String get privateOpenTitle => '100% Privata & Aperta';
 
   @override
-  String get privateOpenDescription =>
-      'Musly non raccoglie alcuna telemetria. Nessun identificatore, dato di tracciamento o analytics.';
+  String get privateOpenDescription => 'Musly non raccoglie alcuna telemetria. Nessun identificatore, dato di tracciamento o analytics.';
 
   @override
   String get readFullPrivacyPolicy => 'Leggi la Privacy Policy Completa';
 
   @override
-  String get viewCompleteDetailsWebsite =>
-      'Visualizza i dettagli completi sul nostro sito web';
+  String get viewCompleteDetailsWebsite => 'Visualizza i dettagli completi sul nostro sito web';
 
   @override
   String get understandAndContinue => 'Ho capito e continua';
@@ -2574,19 +2493,16 @@ class AppLocalizationsIt extends AppLocalizations {
   String get connectedToWebStream => 'Connesso a Web Stream';
 
   @override
-  String get allowSelfSignedCertificatesSubtitle =>
-      'Utile per reti LAN locali o certificati SSL autofirmati';
+  String get allowSelfSignedCertificatesSubtitle => 'Utile per reti LAN locali o certificati SSL autofirmati';
 
   @override
-  String get legacyAuthenticationSubtitle =>
-      'Richiesto per versioni legacy delle API Subsonic';
+  String get legacyAuthenticationSubtitle => 'Richiesto per versioni legacy delle API Subsonic';
 
   @override
   String get certificateFileSubtitle => 'File .crt, .pem o .cer';
 
   @override
-  String get clientIdentityFileSubtitle =>
-      'File di identità client .p12 o .pfx';
+  String get clientIdentityFileSubtitle => 'File di identità client .p12 o .pfx';
 
   @override
   String get copyError => 'Copia errore';
@@ -2595,8 +2511,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get errorCopiedToClipboard => 'Errore copiato negli appunti';
 
   @override
-  String get failedToUpdateFavorite =>
-      'Impossibile aggiornare lo stato preferito';
+  String get failedToUpdateFavorite => 'Impossibile aggiornare lo stato preferito';
 
   @override
   String queuedSongsFromAlbumsForDownload(int songCount, int albumCount) {
@@ -2613,15 +2528,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get downloadAll => 'Scarica tutto';
 
   @override
-  String get createPlaylistSubtitle =>
-      'Crea una playlist personalizzata con i tuoi brani preferiti';
+  String get createPlaylistSubtitle => 'Crea una playlist personalizzata con i tuoi brani preferiti';
 
   @override
   String get addMusicSource => 'Aggiungi Sorgente Musicale';
 
   @override
-  String get addMusicSourceSubtitle =>
-      'Connetti Navidrome, Jellyfin o Web Stream';
+  String get addMusicSourceSubtitle => 'Connetti Navidrome, Jellyfin o Web Stream';
 
   @override
   String get removeFromFavoritesTitle => 'Rimuovere dai Preferiti?';
@@ -2657,8 +2570,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get addWebStream => 'Aggiungi Web Stream';
 
   @override
-  String get addWebStreamSubtitle =>
-      'Riproduzione istantanea senza login richiesto';
+  String get addWebStreamSubtitle => 'Riproduzione istantanea senza login richiesto';
 
   @override
   String get recentSearches => 'Ricerche recenti';
@@ -2667,8 +2579,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get createPlaylistToGetStarted => 'Crea una playlist per iniziare';
 
   @override
-  String get addRadioStationsHint =>
-      'Aggiungi stazioni radio nelle impostazioni del tuo server per vederle qui.';
+  String get addRadioStationsHint => 'Aggiungi stazioni radio nelle impostazioni del tuo server per vederle qui.';
 
   @override
   String get onboardingNext => 'Avanti';
@@ -2689,29 +2600,25 @@ class AppLocalizationsIt extends AppLocalizations {
   String get onboardingSlide1TitleHighlight => 'Sempre con Te.';
 
   @override
-  String get onboardingSlide1Description =>
-      'Connettiti a Navidrome, Subsonic, Jellyfin o riproduci file locali con qualità lossless bit-perfect.';
+  String get onboardingSlide1Description => 'Connettiti a Navidrome, Subsonic, Jellyfin o riproduci file locali con qualità lossless bit-perfect.';
 
   @override
   String get onboardingSlide1Feature1Title => 'Libertà Self-Hosted';
 
   @override
-  String get onboardingSlide1Feature1Desc =>
-      'Piena compatibilità con le API di Subsonic, Navidrome e Jellyfin.';
+  String get onboardingSlide1Feature1Desc => 'Piena compatibilità con le API di Subsonic, Navidrome e Jellyfin.';
 
   @override
   String get onboardingSlide1Feature2Title => 'Supporto Musica Locale';
 
   @override
-  String get onboardingSlide1Feature2Desc =>
-      'Riproduci la tua musica offline direttamente senza configurare un server.';
+  String get onboardingSlide1Feature2Desc => 'Riproduci la tua musica offline direttamente senza configurare un server.';
 
   @override
   String get onboardingSlide1Feature3Title => 'Audio Hi-Res Lossless';
 
   @override
-  String get onboardingSlide1Feature3Desc =>
-      'Riproduzione gapless e bit-perfect per FLAC, ALAC e Opus.';
+  String get onboardingSlide1Feature3Desc => 'Riproduzione gapless e bit-perfect per FLAC, ALAC e Opus.';
 
   @override
   String get onboardingSlide2TitlePrefix => 'Mix Intelligenti,\n';
@@ -2720,62 +2627,52 @@ class AppLocalizationsIt extends AppLocalizations {
   String get onboardingSlide2TitleHighlight => 'Creati su Misura per Te.';
 
   @override
-  String get onboardingSlide2Description =>
-      'Musly apprende le tue abitudini sul dispositivo per creare mix quotidiani e riscoprire i tuoi brani preferiti.';
+  String get onboardingSlide2Description => 'Musly apprende le tue abitudini sul dispositivo per creare mix quotidiani e riscoprire i tuoi brani preferiti.';
 
   @override
   String get onboardingSlide2Feature1Title => 'Profilazione Gusti Algoritmica';
 
   @override
-  String get onboardingSlide2Feature1Desc =>
-      'Apprende frequenze d\'ascolto, skip e valutazioni in locale.';
+  String get onboardingSlide2Feature1Desc => 'Apprende frequenze d\'ascolto, skip e valutazioni in locale.';
 
   @override
   String get onboardingSlide2Feature2Title => 'Mix Giornalieri Personalizzati';
 
   @override
-  String get onboardingSlide2Feature2Desc =>
-      'Playlist automatiche come Per Te, Ascolta di Nuovo e Top Hits.';
+  String get onboardingSlide2Feature2Desc => 'Playlist automatiche come Per Te, Ascolta di Nuovo e Top Hits.';
 
   @override
-  String get onboardingSlide2Feature3Title =>
-      'Elaborazione 100% sul Dispositivo';
+  String get onboardingSlide2Feature3Title => 'Elaborazione 100% sul Dispositivo';
 
   @override
-  String get onboardingSlide2Feature3Desc =>
-      'Il tuo profilo di ascolto resta rigorosamente sul tuo dispositivo.';
+  String get onboardingSlide2Feature3Desc => 'Il tuo profilo di ascolto resta rigorosamente sul tuo dispositivo.';
 
   @override
   String get onboardingSlide3TitlePrefix => 'Completamente Privata.\n';
 
   @override
-  String get onboardingSlide3TitleHighlight =>
-      'Zero Pubblicità, Zero Tracciamento.';
+  String get onboardingSlide3TitleHighlight => 'Zero Pubblicità, Zero Tracciamento.';
 
   @override
-  String get onboardingSlide3Description =>
-      'Zero telemetria e zero analytics. Testi sincronizzati, download offline e sincronizzazione in totale privacy.';
+  String get onboardingSlide3Description => 'Zero telemetria e zero analytics. Testi sincronizzati, download offline e sincronizzazione in totale privacy.';
 
   @override
   String get onboardingSlide3Feature1Title => 'Zero Telemetria & Tracciamento';
 
   @override
-  String get onboardingSlide3Feature1Desc =>
-      'Nessun SDK di terze parti, niente tracker o pubblicità, 100% open source.';
+  String get onboardingSlide3Feature1Desc => 'Nessun SDK di terze parti, niente tracker o pubblicità, 100% open source.';
 
   @override
   String get onboardingSlide3Feature2Title => 'Testi Sincronizzati nel Tempo';
 
   @override
-  String get onboardingSlide3Feature2Desc =>
-      'Testi sincronizzati in tempo reale con supporto a LRCLIB.';
+  String get onboardingSlide3Feature2Desc => 'Testi sincronizzati in tempo reale con supporto a LRCLIB.';
 
   @override
   String get onboardingSlide3Feature3Title => 'Gestore Download Offline';
 
   @override
-  String get onboardingSlide3Feature3Desc =>
-      'Salva intere playlist e album in locale con download multipli.';
+  String get onboardingSlide3Feature3Desc => 'Salva intere playlist e album in locale con download multipli.';
 
   @override
   String get finishTour => 'Termina Tour';
@@ -2833,8 +2730,7 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get yourYearInSoundSubtitle =>
-      'Hai esplorato profondità sonore, rivissuto momenti e creato ricordi attraverso la musica.';
+  String get yourYearInSoundSubtitle => 'Hai esplorato profondità sonore, rivissuto momenti e creato ricordi attraverso la musica.';
 
   @override
   String get yourMusicalChronotype => 'IL TUO CRONOTIPO MUSICALE';
@@ -2858,29 +2754,25 @@ class AppLocalizationsIt extends AppLocalizations {
   String get chronotypeMidnightWanderer => 'Esploratore Notturno 🌙';
 
   @override
-  String get chronotypeMidnightWandererDesc =>
-      'I tuoi momenti musicali più profondi avvengono a tarda notte, quando il mondo tace.';
+  String get chronotypeMidnightWandererDesc => 'I tuoi momenti musicali più profondi avvengono a tarda notte, quando il mondo tace.';
 
   @override
   String get chronotypeSunriseHarmonizer => 'Armonizzatore dell\'Alba ☀️';
 
   @override
-  String get chronotypeSunriseHarmonizerDesc =>
-      'Inizi ogni mattina con ritmo, impostando la colonna sonora per l\'intera giornata.';
+  String get chronotypeSunriseHarmonizerDesc => 'Inizi ogni mattina con ritmo, impostando la colonna sonora per l\'intera giornata.';
 
   @override
   String get chronotypeAfternoonFlow => 'Flusso del Pomeriggio ⚡';
 
   @override
-  String get chronotypeAfternoonFlowDesc =>
-      'Il pomeriggio è il tuo momento clou per l\'ascolto, alimentando la tua energia con suoni carichi di ritmo.';
+  String get chronotypeAfternoonFlowDesc => 'Il pomeriggio è il tuo momento clou per l\'ascolto, alimentando la tua energia con suoni carichi di ritmo.';
 
   @override
   String get chronotypeTwilightLounger => 'Sognatore del Crepuscolo 🌆';
 
   @override
-  String get chronotypeTwilightLoungerDesc =>
-      'Le serate sono fatte per rilassarsi e perdersi in viaggi immersivi tra gli album.';
+  String get chronotypeTwilightLoungerDesc => 'Le serate sono fatte per rilassarsi e perdersi in viaggi immersivi tra gli album.';
 
   @override
   String get archetypeLuminary => 'Il Luminare';
@@ -2889,8 +2781,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get archetypeLuminaryBadge => 'ESPLORATORE SONORO';
 
   @override
-  String get archetypeLuminaryDesc =>
-      'Porti alla luce generi diversi e cerchi costantemente nuovi orizzonti musicali.';
+  String get archetypeLuminaryDesc => 'Porti alla luce generi diversi e cerchi costantemente nuovi orizzonti musicali.';
 
   @override
   String get archetypeLuminaryTrait1 => 'Gusto Eclettico';
@@ -2908,8 +2799,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get archetypeDevoteeBadge => 'SUPERFAN';
 
   @override
-  String get archetypeDevoteeDesc =>
-      'Quando ami un artista o un album, lo ascolti a ripetizione con dedizione senza pari.';
+  String get archetypeDevoteeDesc => 'Quando ami un artista o un album, lo ascolti a ripetizione con dedizione senza pari.';
 
   @override
   String get archetypeDevoteeTrait1 => 'Profonda Fedeltà';
@@ -2927,8 +2817,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get archetypeNightOwlBadge => 'VIBRAZIONI NOTTURNE';
 
   @override
-  String get archetypeNightOwlDesc =>
-      'La tua anima appartiene ai paesaggi sonori di mezzanotte, accordi d\'atmosfera e sessioni sotto le stelle.';
+  String get archetypeNightOwlDesc => 'La tua anima appartiene ai paesaggi sonori di mezzanotte, accordi d\'atmosfera e sessioni sotto le stelle.';
 
   @override
   String get archetypeNightOwlTrait1 => 'Atmosferico';
@@ -2946,8 +2835,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get archetypeSunriseBadge => 'CATALIZZATORE D\'ENERGIA';
 
   @override
-  String get archetypeSunriseDesc =>
-      'Svegli il mondo con vibrazioni positive e lasci che melodie ottimiste accendano la tua giornata.';
+  String get archetypeSunriseDesc => 'Svegli il mondo con vibrazioni positive e lasci che melodie ottimiste accendano la tua giornata.';
 
   @override
   String get archetypeSunriseTrait1 => 'Coinvolgente';
@@ -2965,8 +2853,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get archetypeAlchemistBadge => 'CURATORE DI VIBRAZIONI';
 
   @override
-  String get archetypeAlchemistDesc =>
-      'Trasformi i momenti quotidiani in esperienze cinematografiche con colonne sonore perfettamente curate.';
+  String get archetypeAlchemistDesc => 'Trasformi i momenti quotidiani in esperienze cinematografiche con colonne sonore perfettamente curate.';
 
   @override
   String get archetypeAlchemistTrait1 => 'Istinto da Curatore';
@@ -3005,8 +2892,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get tabAndroidAuto => 'Android Auto';
 
   @override
-  String get androidAutoNotSupported =>
-      'Android Auto non è supportato su questo dispositivo.';
+  String get androidAutoNotSupported => 'Android Auto non è supportato su questo dispositivo.';
 
   @override
   String get androidAutoCategories => 'Categorie';
@@ -3042,8 +2928,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get androidAutoMaxItems => 'Limite Elementi';
 
   @override
-  String get androidAutoMaxItemsDesc =>
-      'Numero massimo di elementi da caricare per categoria';
+  String get androidAutoMaxItemsDesc => 'Numero massimo di elementi da caricare per categoria';
 
   @override
   String get androidAutoNowPlaying => 'Ora in Riproduzione';
@@ -3100,8 +2985,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get androidAutoDefaultServer => 'Server Predefinito';
 
   @override
-  String get androidAutoDefaultServerDesc =>
-      'Seleziona quale server usare quando avvii Android Auto';
+  String get androidAutoDefaultServerDesc => 'Seleziona quale server usare quando avvii Android Auto';
 
   @override
   String get androidAutoUseActiveServer => 'Usa server attivo dell\'app';

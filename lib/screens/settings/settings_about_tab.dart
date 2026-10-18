@@ -8,7 +8,6 @@ import 'package:musly/services/analytics_service.dart';
 import 'package:musly/widgets/dialogs/support_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:musly/widgets/settings/settings_section_card.dart';
-import 'package:musly/widgets/settings/settings_switch_tile.dart';
 import 'package:musly/widgets/settings/settings_list_tile.dart';
 import 'package:musly/utils/context_extensions.dart';
 import 'package:flutter/foundation.dart';
@@ -49,7 +48,7 @@ class _SettingsAboutTabState extends State<SettingsAboutTab> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.fromLTRB(0, 16, 0, 180),
       children: [
         SettingsSectionCard(
           title: AppLocalizations.of(context)!.sectionAboutInformation,
@@ -59,16 +58,61 @@ class _SettingsAboutTabState extends State<SettingsAboutTab> {
               icon: CupertinoIcons.info,
               iconColor: Theme.of(context).colorScheme.primary,
               title: AppLocalizations.of(context)!.aboutVersion,
-              subtitle: UpdateService.currentVersion,
+              subtitle: '${UpdateService.currentVersion} (Veyino Edition)',
               onTap: _onVersionTapped,
             ),
             _buildDivider(context),
             _buildInfoTile(
               context,
-              icon: CupertinoIcons.device_phone_portrait,
-              iconColor: const Color(0xFF007AFF),
-              title: AppLocalizations.of(context)!.aboutPlatform,
-              subtitle: Theme.of(context).platform.name.toUpperCase(),
+              icon: CupertinoIcons.sparkles,
+              iconColor: const Color(0xFF10B981),
+              title: '维护与定制',
+              subtitle: 'Veyino 团队',
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        SettingsSectionCard(
+          title: 'Veyino 团队',
+          children: [
+            _buildLinkTile(
+              context,
+              icon: CupertinoIcons.globe,
+              title: '团队官网',
+              subtitle: 'veyino.org',
+              url: 'https://veyino.org',
+            ),
+            _buildDivider(context),
+            _buildLinkTile(
+              context,
+              icon: Icons.code_rounded,
+              title: 'GitHub (创作者)',
+              subtitle: 'github.com/ysnsk111',
+              url: 'https://github.com/ysnsk111',
+            ),
+            _buildDivider(context),
+            _buildLinkTile(
+              context,
+              icon: CupertinoIcons.mail_solid,
+              title: '团队邮箱',
+              subtitle: 'veyinotm@gmail.com',
+              url: 'mailto:veyinotm@gmail.com',
+            ),
+            _buildDivider(context),
+            _buildLinkTile(
+              context,
+              icon: CupertinoIcons.headphones,
+              title: '联系支持',
+              subtitle: 'support@veyino.org',
+              url: 'mailto:support@veyino.org',
+            ),
+            _buildDivider(context),
+            _buildLinkTile(
+              context,
+              icon: Icons.fork_right_rounded,
+              title: '原项目 Fork 来源 (Musly)',
+              subtitle: 'github.com/dddevid/Musly',
+              url: 'https://github.com/dddevid/Musly',
             ),
           ],
         ),
@@ -84,30 +128,17 @@ class _SettingsAboutTabState extends State<SettingsAboutTab> {
             _buildLinkTile(
               context,
               icon: Icons.code_rounded,
-              title: AppLocalizations.of(context)!.aboutLinkGitHub,
-              url: 'https://github.com/dddevid/Musly',
-            ),
-            _buildDivider(context),
-            _buildLinkTile(
-              context,
-              icon: CupertinoIcons.doc_text,
-              title: AppLocalizations.of(context)!.aboutLinkChangelog,
-              url:
-                  'https://github.com/dddevid/Musly/releases/tag/v${UpdateService.currentVersion}',
+              title: 'Veyino GitHub 仓库',
+              subtitle: 'github.com/ysnsk111',
+              url: 'https://github.com/ysnsk111',
             ),
             _buildDivider(context),
             _buildLinkTile(
               context,
               icon: CupertinoIcons.exclamationmark_bubble,
-              title: AppLocalizations.of(context)!.aboutLinkReportIssue,
-              url: 'https://github.com/dddevid/Musly/issues/new',
-            ),
-            _buildDivider(context),
-            _buildLinkTile(
-              context,
-              icon: Icons.chat_bubble_rounded,
-              title: AppLocalizations.of(context)!.aboutLinkDiscord,
-              url: 'https://discord.gg/k9FqpbT65M',
+              title: '提交问题与支持',
+              subtitle: 'support@veyino.org',
+              url: 'mailto:support@veyino.org',
             ),
             _buildDivider(context),
             _buildActionTile(
@@ -270,22 +301,43 @@ class _SettingsAboutTabState extends State<SettingsAboutTab> {
   }
 
   Widget _buildDeveloperInfo(BuildContext context) {
-    return SettingsListTile(
-      leading: Container(
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF5856D6), Color(0xFFAF52DE)],
+    return Column(
+      children: [
+        SettingsListTile(
+          leading: Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF5856D6), Color(0xFFAF52DE)],
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.code_rounded, color: Colors.white, size: 18),
           ),
-          borderRadius: BorderRadius.circular(8),
+          title: '开发者 / 创作者',
+          subtitle: 'Veyino 团队 (GitHub: ysnsk111)',
+          trailing: const Icon(Icons.open_in_new_rounded, size: 18),
+          onTap: () => _openUrl('https://github.com/ysnsk111'),
         ),
-        child: const Icon(Icons.code_rounded, color: Colors.white, size: 18),
-      ),
-      title: AppLocalizations.of(context)!.aboutMadeBy,
-      subtitle: AppLocalizations.of(context)!.aboutGitHub,
-      trailing: const Icon(Icons.open_in_new_rounded, size: 18),
-      onTap: () => _openUrl('https://github.com/dddevid'),
+        _buildDivider(context),
+        SettingsListTile(
+          leading: Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: const Color(0xFF6366F1).withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.fork_right_rounded,
+                color: Color(0xFF6366F1), size: 18),
+          ),
+          title: '原项目 Fork 来源 (Musly)',
+          subtitle: 'github.com/dddevid/Musly',
+          trailing: const Icon(Icons.open_in_new_rounded, size: 18),
+          onTap: () => _openUrl('https://github.com/dddevid/Musly'),
+        ),
+      ],
     );
   }
 
@@ -293,6 +345,7 @@ class _SettingsAboutTabState extends State<SettingsAboutTab> {
     BuildContext context, {
     required IconData icon,
     required String title,
+    String? subtitle,
     required String url,
   }) {
     return SettingsListTile(
@@ -310,6 +363,7 @@ class _SettingsAboutTabState extends State<SettingsAboutTab> {
         ),
       ),
       title: title,
+      subtitle: subtitle,
       trailing: Icon(
         Icons.open_in_new_rounded,
         size: 18,

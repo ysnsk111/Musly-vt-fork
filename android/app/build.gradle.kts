@@ -18,7 +18,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.devid.musly"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -32,7 +32,7 @@ android {
 
     defaultConfig {
         applicationId = "com.devid.musly"
-        minSdk = flutter.minSdkVersion
+        minSdk = 24
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -46,7 +46,9 @@ android {
     signingConfigs {
         create("release") {
             if (keystorePropertiesFile.exists()) {
-                storeFile = file(keystoreProperties["storeFile"] as String)
+                val path = keystoreProperties["storeFile"] as String
+                val target = file(path)
+                storeFile = if (target.exists()) target else rootProject.file(path)
                 storePassword = keystoreProperties["storePassword"] as String
                 keyAlias = keystoreProperties["keyAlias"] as String
                 keyPassword = keystoreProperties["keyPassword"] as String
@@ -75,6 +77,7 @@ android {
 chaquopy {
     defaultConfig {
         version = "3.11"
+        buildPython("/usr/bin/python3.11")
         pip {
             install("yt-dlp")
         }

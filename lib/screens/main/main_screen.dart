@@ -1,5 +1,4 @@
-import 'dart:io';
-import 'package:flutter/foundation.dart';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -489,48 +488,146 @@ class _MainScreenState extends State<MainScreen> {
             resizeToAvoidBottomInset: false,
             body: Column(
               children: [
-                if (widget.isOfflineMode || isLocalMode)
-                  Container(
-                    width: double.infinity,
-                    color: isLocalMode ? Colors.indigo : Colors.orange,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 16,
-                    ),
-                    child: SafeArea(
-                      bottom: false,
-                      child: Row(
-                        children: [
-                          Icon(
-                            isLocalMode
-                                ? CupertinoIcons.folder_fill
-                                : CupertinoIcons.wifi_slash,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              isLocalMode
-                                  ? AppLocalizations.of(
-                                      context,
-                                    )!
-                                      .localFilesModeBanner
-                                  : AppLocalizations.of(
-                                      context,
-                                    )!
-                                      .offlineModeBanner,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
+                Consumer<AuthProvider>(
+                  builder: (context, auth, _) {
+                    final isOffline = widget.isOfflineMode ||
+                        isLocalMode ||
+                        auth.state == AuthState.offlineMode;
+                    if (!isOffline) return const SizedBox.shrink();
+
+                    return Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: isLocalMode
+                              ? [const Color(0xFF4338CA), const Color(0xFF6366F1)]
+                              : [const Color(0xFFD97706), const Color(0xFFF59E0B)],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: (isLocalMode
+                                    ? const Color(0xFF4338CA)
+                                    : const Color(0xFFD97706))
+                                .withValues(alpha: 0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
-                    ),
-                  ),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 16,
+                      ),
+                      child: SafeArea(
+                        bottom: false,
+                        child: Row(
+                          children: [
+                            Icon(
+                              isLocalMode
+                                  ? CupertinoIcons.folder_fill
+                                  : CupertinoIcons.wifi_slash,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                isLocalMode
+                                    ? AppLocalizations.of(
+                                        context,
+                                      )!
+                                        .localFilesModeBanner
+                                    : AppLocalizations.of(
+                                        context,
+                                      )!
+                                        .offlineModeBanner,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            if (!isLocalMode)
+                              Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(16),
+                                  onTap: auth.isRetrying
+                                      ? null
+                                      : () async {
+                                          final success =
+                                              await auth.retryConnection();
+                                          if (context.mounted) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(success
+                                                    ? '已恢复在线模式，正在同步音乐库...'
+                                                    : '无法连接到服务器，请检查网络或配置'),
+                                                behavior:
+                                                    SnackBarBehavior.floating,
+                                                backgroundColor: success
+                                                    ? const Color(0xFF10B981)
+                                                    : const Color(0xFFEF4444),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 5,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Colors.white.withValues(alpha: 0.25),
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: Colors.white
+                                            .withValues(alpha: 0.4),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        if (auth.isRetrying)
+                                          const SizedBox(
+                                            width: 12,
+                                            height: 12,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      Colors.white),
+                                            ),
+                                          )
+                                        else
+                                          const Icon(
+                                            CupertinoIcons.arrow_clockwise,
+                                            size: 13,
+                                            color: Colors.white,
+                                          ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          auth.isRetrying ? '重试中...' : '重试',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 if (isLocalMode)
                   Selector<LocalMusicService, (bool, double, String)>(
                     selector: (_, s) =>
@@ -582,28 +679,39 @@ class _MainScreenState extends State<MainScreen> {
                     },
                   ),
                 Expanded(
-                  child: Navigator(
-                    key: NavigationHelper.appNavigatorKey,
-                    onGenerateRoute: (settings) {
-                      return MaterialPageRoute(
-                        builder: (_) => LazyIndexedStack(
-                          index: _currentIndex,
-                          children: _screens,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                if (MediaQuery.of(context).viewInsets.bottom == 0)
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
+                  child: Stack(
                     children: [
-                      if (hasCurrentSong) const MiniPlayer(),
-                      liquidGlass
-                          ? _buildGlassBottomNav(context)
-                          : _buildBottomNav(context),
+                      Positioned.fill(
+                        child: Navigator(
+                          key: NavigationHelper.appNavigatorKey,
+                          onGenerateRoute: (settings) {
+                            return MaterialPageRoute(
+                              builder: (_) => LazyIndexedStack(
+                                index: _currentIndex,
+                                children: _screens,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      if (MediaQuery.of(context).viewInsets.bottom == 0)
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (hasCurrentSong) const MiniPlayer(),
+                              liquidGlass
+                                  ? _buildGlassBottomNav(context)
+                                  : _buildBottomNav(context),
+                            ],
+                          ),
+                        ),
                     ],
                   ),
+                ),
               ],
             ),
           ),
@@ -654,160 +762,104 @@ class _MainScreenState extends State<MainScreen> {
     ];
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(12, 4, 12, safeBottom > 0 ? safeBottom : 12),
-      child: Container(
-        height: 62,
-        decoration: BoxDecoration(
-          color: isDark ? const Color(0xF018181A) : const Color(0xF5FFFFFF),
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.12)
-                : Colors.black.withValues(alpha: 0.08),
-            width: 0.8,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.18),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          children: List.generate(items.length, (idx) {
-            final item = items[idx];
-            final isSelected = _currentIndex == idx;
-            return Expanded(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {
-                  final navigatorState =
-                      NavigationHelper.appNavigatorKey.currentState;
-                  navigatorState?.popUntil((route) => route.isFirst);
-
-                  if (idx == 2) {
-                    final now = DateTime.now();
-                    if (now.difference(_lastSearchTap).inSeconds > 3) {
-                      _searchTapCount = 0;
-                    }
-                    _searchTapCount++;
-                    _lastSearchTap = now;
-                    if (_searchTapCount >= 11) {
-                      _searchTapCount = 0;
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const FantasyScreen(),
-                        ),
-                      );
-                      return;
-                    }
-                  } else {
-                    _searchTapCount = 0;
-                  }
-
-                  setState(() => _currentIndex = idx);
-                },
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 150),
-                      child: Icon(
-                        isSelected ? item.activeIcon : item.icon,
-                        key: ValueKey(isSelected),
-                        color: isSelected
-                            ? accent
-                            : (isDark ? Colors.white54 : Colors.black38),
-                        size: 22,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      item.label,
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.w400,
-                        color: isSelected
-                            ? accent
-                            : (isDark ? Colors.white54 : Colors.black38),
-                      ),
-                    ),
-                  ],
-                ),
+      padding: EdgeInsets.fromLTRB(16, 4, 16, safeBottom > 0 ? safeBottom + 4 : 14),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(32),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 30.0, sigmaY: 30.0),
+          child: Container(
+            height: 64,
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0x99141418) : const Color(0xAAFFFFFF),
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.16)
+                    : Colors.black.withValues(alpha: 0.08),
+                width: 1.0,
               ),
-            );
-          }),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.22),
+                  blurRadius: 20,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Row(
+              children: List.generate(items.length, (idx) {
+                final item = items[idx];
+                final isSelected = _currentIndex == idx;
+                return Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      final navigatorState =
+                          NavigationHelper.appNavigatorKey.currentState;
+                      navigatorState?.popUntil((route) => route.isFirst);
+
+                      if (idx == 2) {
+                        final now = DateTime.now();
+                        if (now.difference(_lastSearchTap).inSeconds > 3) {
+                          _searchTapCount = 0;
+                        }
+                        _searchTapCount++;
+                        _lastSearchTap = now;
+                        if (_searchTapCount >= 11) {
+                          _searchTapCount = 0;
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const FantasyScreen(),
+                            ),
+                          );
+                          return;
+                        }
+                      } else {
+                        _searchTapCount = 0;
+                      }
+
+                      setState(() => _currentIndex = idx);
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 150),
+                          child: Icon(
+                            isSelected ? item.activeIcon : item.icon,
+                            key: ValueKey(isSelected),
+                            color: isSelected
+                                ? accent
+                                : (isDark ? Colors.white54 : Colors.black38),
+                            size: 22,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          item.label,
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight:
+                                isSelected ? FontWeight.w600 : FontWeight.w400,
+                            color: isSelected
+                                ? accent
+                                : (isDark ? Colors.white54 : Colors.black38),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
         ),
       ),
     );
   }
 
   Widget _buildBottomNav(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-        border: Border(
-          top: BorderSide(
-            color: isDark ? const Color(0xFF38383A) : const Color(0xFFE5E5EA),
-            width: 0.5,
-          ),
-        ),
-      ),
-      child: SafeArea(
-        top: false,
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            final navigatorState =
-                NavigationHelper.appNavigatorKey.currentState;
-            navigatorState?.popUntil((route) => route.isFirst);
-
-            if (index == 2) {
-              final now = DateTime.now();
-              if (now.difference(_lastSearchTap).inSeconds > 3) {
-                _searchTapCount = 0;
-              }
-              _searchTapCount++;
-              _lastSearchTap = now;
-              if (_searchTapCount >= 11) {
-                _searchTapCount = 0;
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const FantasyScreen()),
-                );
-                return;
-              }
-            } else {
-              _searchTapCount = 0;
-            }
-
-            setState(() => _currentIndex = index);
-          },
-          items: [
-            BottomNavigationBarItem(
-              icon: const Icon(CupertinoIcons.music_house),
-              activeIcon: const Icon(CupertinoIcons.music_house_fill),
-              label: l10n.home,
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(CupertinoIcons.collections),
-              activeIcon: const Icon(CupertinoIcons.collections_solid),
-              label: l10n.library,
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(CupertinoIcons.search),
-              activeIcon: const Icon(CupertinoIcons.search),
-              label: l10n.search,
-            ),
-          ],
-        ),
-      ),
-    );
+    return _buildGlassBottomNav(context);
   }
 }
 

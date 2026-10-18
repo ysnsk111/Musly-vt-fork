@@ -362,7 +362,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
         _LibraryItem(
           type: _LibraryItemType.allSongs,
           title: l10n?.songs ?? 'All Songs',
-          subtitle: '${libraryProvider.cachedAllSongs.length} ${l10n?.songs?.toLowerCase() ?? 'songs'}',
+          subtitle: '${libraryProvider.cachedAllSongs.length} ${l10n?.songs.toLowerCase() ?? 'songs'}',
           onTap: () => _navigate(context, const AllSongsScreen()),
         ),
       );
@@ -615,7 +615,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
               else
                 _buildSliverList(
                     context, libraryProvider, isDark, isYoutube, hPad),
-              const SliverToBoxAdapter(child: SizedBox(height: 80)),
+              const SliverToBoxAdapter(child: SizedBox(height: 160)),
             ],
           );
         },

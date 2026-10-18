@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:io';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:musly/services/recommendation_service.dart';
 import 'package:musly/services/player_ui_settings_service.dart';
 import 'package:musly/services/theme_service.dart';
@@ -14,7 +13,6 @@ import 'package:musly/l10n/app_localizations.dart';
 import 'package:musly/services/subsonic_service.dart';
 import 'package:musly/widgets/settings/settings_section_card.dart';
 import 'package:musly/widgets/settings/settings_switch_tile.dart';
-import 'package:musly/widgets/settings/settings_list_tile.dart';
 import 'package:musly/widgets/settings/settings_icon_badge.dart';
 import 'package:musly/utils/context_extensions.dart';
 import 'package:musly/services/storage_service.dart';
@@ -44,7 +42,6 @@ class _SettingsDisplayTabState extends State<SettingsDisplayTab> {
 
   ThemeMode _themeMode = ThemeMode.system;
   AccentColor _accentColor = AccentColor.red;
-  bool _liquidGlass = false;
 
   bool get _isDesktop {
     if (kIsWeb) return false;
@@ -78,7 +75,6 @@ class _SettingsDisplayTabState extends State<SettingsDisplayTab> {
       _artworkResolution = _playerUiSettings.getArtworkResolution();
       _themeMode = themeService.themeMode;
       _accentColor = themeService.accentColor;
-      _liquidGlass = themeService.liquidGlass;
     });
 
     if (_isDesktop) {
@@ -93,7 +89,7 @@ class _SettingsDisplayTabState extends State<SettingsDisplayTab> {
         Provider.of<SubsonicService>(context, listen: false).isYoutube;
 
     return ListView(
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.fromLTRB(0, 16, 0, 180),
       children: [
         SettingsSectionCard(
           title: AppLocalizations.of(context)!.appearanceSection.toUpperCase(),
@@ -106,8 +102,6 @@ class _SettingsDisplayTabState extends State<SettingsDisplayTab> {
             _buildLanguageSelector(),
             const SettingsDivider(),
             _buildOtaSyncTile(),
-            const SettingsDivider(),
-            _buildTranslationCredit(),
           ],
         ),
         const SizedBox(height: 24),
@@ -218,42 +212,6 @@ class _SettingsDisplayTabState extends State<SettingsDisplayTab> {
               },
             ),
           ),
-          if (!_isDesktop) ...[
-            const SizedBox(height: 20),
-            _buildEditorRow(
-              icon: CupertinoIcons.sparkles,
-              iconColor: const Color(0xFF64D2FF),
-              label: AppLocalizations.of(context)!.circularDesignLabel,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.circularDesignSubtitle,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isDark
-                          ? AppTheme.darkSecondaryText
-                          : AppTheme.lightSecondaryText,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Spacer(),
-                      CupertinoSwitch(
-                        value: _liquidGlass,
-                        activeTrackColor: const Color(0xFF64D2FF),
-                        onChanged: (value) async {
-                          setState(() => _liquidGlass = value);
-                          await themeService.setLiquidGlass(value);
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
         ],
       ),
     );
@@ -704,47 +662,6 @@ class _SettingsDisplayTabState extends State<SettingsDisplayTab> {
         }
       },
     );
-  }
-
-  Widget _buildTranslationCredit() {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      leading: Container(
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          color: const Color(0xFF5AC8FA).withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: const Icon(
-          CupertinoIcons.heart_fill,
-          color: Color(0xFFFF3B30),
-          size: 18,
-        ),
-      ),
-      title: Text(
-        AppLocalizations.of(context)!.communityTranslations,
-        style: const TextStyle(fontSize: 16),
-      ),
-      subtitle: Text(
-        AppLocalizations.of(context)!.communityTranslationsSubtitle,
-        style: TextStyle(
-          fontSize: 13,
-          color: context.isDark
-              ? AppTheme.darkSecondaryText
-              : AppTheme.lightSecondaryText,
-        ),
-      ),
-      trailing: const Icon(Icons.open_in_new_rounded, size: 18),
-      onTap: () => _launchUrl('https://crowdin.com/project/musly'),
-    );
-  }
-
-  Future<void> _launchUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
   }
 
   void _showLanguagePicker(BuildContext context, LocaleService localeService) {

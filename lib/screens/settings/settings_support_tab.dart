@@ -8,14 +8,14 @@ class SettingsSupportTab extends StatelessWidget {
   const SettingsSupportTab({super.key});
 
   Future<void> _launchDiscord() async {
-    final uri = Uri.parse('https://discord.gg/RrcFvFPdRU');
+    final uri = Uri.parse('mailto:support@veyino.org');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
 
   Future<void> _launchDonation() async {
-    final uri = Uri.parse('https://revolut.me/ddevid_1');
+    final uri = Uri.parse('https://veyino.org');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
@@ -30,7 +30,7 @@ class SettingsSupportTab extends StatelessWidget {
         isDark ? AppTheme.darkSecondaryText : AppTheme.lightSecondaryText;
 
     return ListView(
-      padding: const EdgeInsets.symmetric(vertical: 24),
+      padding: const EdgeInsets.fromLTRB(0, 24, 0, 180),
       children: [
         Center(
           child: Container(

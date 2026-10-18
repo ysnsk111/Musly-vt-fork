@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart' hide RepeatMode;
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:musly/widgets/common/blurred_gradient_background.dart';
 import 'package:musly/widgets/now_playing/album_art_view.dart';
 import 'package:musly/widgets/now_playing/marquee_text.dart';
@@ -22,6 +23,7 @@ import 'package:musly/widgets/common/multi_artist_widget.dart';
 import 'package:musly/services/player_ui_settings_service.dart';
 import 'package:musly/l10n/app_localizations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:musly/widgets/common/audio_quality_badge.dart';
 import 'package:musly/services/tv_detection_service.dart';
 import 'tv_now_playing_screen.dart';
 
@@ -547,22 +549,39 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                     color: Colors.white.withValues(alpha: 0.75),
                   ),
                 ),
+                if (currentSong != null)
+                  AudioQualityBadge(
+                    song: currentSong,
+                    fontSize: isSmall || isLandscape ? 9.5 : 10.5,
+                  ),
               ],
             ),
           ),
           IconButton(
             tooltip: isStarred ? 'Remove from favorites' : 'Add to favorites',
-            icon: Icon(
-              isStarred
-                  ? Icons.favorite_rounded
-                  : Icons.favorite_border_rounded,
-              color: isStarred
-                  ? Theme.of(context).colorScheme.primary
-                  : Colors.white,
-              size: isLandscape ? 22 : 24,
+            icon: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (child, animation) => ScaleTransition(
+                scale: CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.elasticOut,
+                ),
+                child: child,
+              ),
+              child: Icon(
+                isStarred
+                    ? Icons.favorite_rounded
+                    : Icons.favorite_border_rounded,
+                key: ValueKey(isStarred),
+                color: isStarred
+                    ? (Theme.of(context).colorScheme.primary)
+                    : Colors.white,
+                size: isLandscape ? 22 : 24,
+              ),
             ),
             onPressed: () {
               if (currentSong == null) return;
+              HapticFeedback.mediumImpact();
               provider.toggleFavorite();
             },
           ),
@@ -749,7 +768,9 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                             },
                             child: AlbumArtView(
                               image: _currentImageProvider ?? widget.image,
-                              tag: currentSong?.id ?? widget.heroTag,
+                              tag: currentSong != null
+                                  ? 'cover_${currentSong.id}'
+                                  : widget.heroTag,
                             ),
                           ),
                         ),
@@ -942,7 +963,9 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                         },
                         child: AlbumArtView(
                           image: _currentImageProvider ?? widget.image,
-                          tag: currentSong?.id ?? widget.heroTag,
+                          tag: currentSong != null
+                              ? 'cover_${currentSong.id}'
+                              : widget.heroTag,
                         ),
                       ),
                     ),
