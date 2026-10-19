@@ -51,7 +51,8 @@ class NowPlayingScreen extends StatefulWidget {
   State<NowPlayingScreen> createState() => _NowPlayingScreenState();
 }
 
-class _NowPlayingScreenState extends State<NowPlayingScreen> {
+class _NowPlayingScreenState extends State<NowPlayingScreen>
+    with TickerProviderStateMixin {
   late PageController _pageController;
   int _currentPage = 0;
   List<Color> _bgColors = [];
@@ -60,9 +61,23 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
   Song? _lastSong;
   ImageProvider? _currentImageProvider;
 
+  double _dragOffset = 0.0;
+  late AnimationController _springController;
+  Animation<double>? _springAnimation;
+
   @override
   void initState() {
     super.initState();
+    _springController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 260),
+    )..addListener(() {
+        if (_springAnimation != null) {
+          setState(() {
+            _dragOffset = _springAnimation!.value;
+          });
+        }
+      });
     _pageController = PageController(initialPage: 0);
     _fetchedLyrics = widget.lyrics;
     _currentImageProvider = widget.image;
@@ -184,15 +199,36 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
 
   @override
   void dispose() {
+    _springController.dispose();
     _pageController.dispose();
     super.dispose();
   }
 
-  void _onVerticalDragUpdate(DragUpdateDetails details) {}
+  void _onVerticalDragUpdate(DragUpdateDetails details) {
+    if (_springController.isAnimating) _springController.stop();
+    final newOffset = _dragOffset + details.delta.dy;
+    if (newOffset >= 0) {
+      setState(() {
+        _dragOffset = newOffset;
+      });
+    }
+  }
 
   void _onVerticalDragEnd(DragEndDetails details) {
-    if (details.primaryVelocity != null && details.primaryVelocity! > 300) {
+    final velocity = details.primaryVelocity ?? 0;
+    if (_dragOffset > 130 || velocity > 280) {
       Navigator.of(context).pop();
+    } else if (_dragOffset > 0) {
+      _springAnimation = Tween<double>(
+        begin: _dragOffset,
+        end: 0.0,
+      ).animate(
+        CurvedAnimation(
+          parent: _springController,
+          curve: Curves.easeOutCubic,
+        ),
+      );
+      _springController.forward(from: 0.0);
     }
   }
 
@@ -227,14 +263,27 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
     final effectiveRightPadding =
         viewPadding.right > 0 ? viewPadding.right : mediaQueryPadding.right;
 
+    final double dragProgress = (_dragOffset / 350.0).clamp(0.0, 1.0);
+    final double scale = (1.0 - (dragProgress * 0.12)).clamp(0.88, 1.0);
+    final double cornerRadius = dragProgress * 36.0;
+
     return Theme(
       data: ThemeData.dark(),
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.black.withValues(
+          alpha: (1.0 - dragProgress * 0.45).clamp(0.0, 1.0),
+        ),
         body: GestureDetector(
           onVerticalDragUpdate: isLandscape ? null : _onVerticalDragUpdate,
           onVerticalDragEnd: isLandscape ? null : _onVerticalDragEnd,
-          child: Stack(
+          child: Transform.translate(
+            offset: Offset(0, _dragOffset),
+            child: Transform.scale(
+              scale: scale,
+              alignment: Alignment.topCenter,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(cornerRadius),
+                child: Stack(
             children: [
               Positioned.fill(
                 child: RepaintBoundary(
@@ -365,7 +414,10 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
           ),
         ),
       ),
-    );
+    ),
+  ),
+),
+);
   }
 
   Widget _buildLiveLyricPill(PlayerProvider provider, Color accentColor,

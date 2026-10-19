@@ -34,4 +34,3 @@ export 'settings/settings_playback_tab.dart';
 export 'settings/settings_server_tab.dart';
 export 'settings/settings_storage_tab.dart';
 export 'settings/settings_about_tab.dart';
-export 'settings/settings_support_tab.dart';

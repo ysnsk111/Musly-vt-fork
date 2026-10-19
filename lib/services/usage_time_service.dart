@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:musly/widgets/dialogs/support_dialog.dart';
 
 class UsageTimeService extends ChangeNotifier with WidgetsBindingObserver {
   static final UsageTimeService _instance = UsageTimeService._internal();
@@ -22,8 +21,9 @@ class UsageTimeService extends ChangeNotifier with WidgetsBindingObserver {
   int get targetSeconds => _targetSeconds;
   double get progress => (_accumulatedSeconds / _targetSeconds).clamp(0.0, 1.0);
   bool get isTargetReached => _accumulatedSeconds >= _targetSeconds;
-  bool get shouldShowDialog =>
-      isTargetReached && !_dialogShown && !_dontShowAgain;
+  bool get shouldShowDialog => false;
+  bool get dialogShown => _dialogShown;
+  bool get dontShowAgain => _dontShowAgain;
 
   Future<void> initialize() async {
     if (_initialized) return;
@@ -121,21 +121,6 @@ class UsageTimeService extends ChangeNotifier with WidgetsBindingObserver {
     _dialogShown = true;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_prefsKeyDialogShown, true);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final context = _getContext();
-      if (context != null) {
-        showDialog(
-          context: context,
-          builder: (context) => const SupportDialog(),
-          barrierDismissible: true,
-        );
-      }
-    });
-  }
-
-  BuildContext? _getContext() {
-    return null;
   }
 
   Future<void> markDontShowAgain() async {

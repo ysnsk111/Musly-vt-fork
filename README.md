@@ -1,163 +1,94 @@
-
-# Musly - Universal Music Streaming Player & Client
-
-**Musly** is a free, modern, and elegant music player and streaming client. Stream your self-hosted music library from **Navidrome**, **Subsonic**, **Jellyfin**, **Emby**, or **Airsonic**, listen to live **Web Streams & Internet Radio**, or play **Local Music Files** directly from your device on Android, iOS, Windows, Linux, and macOS.
-
-## GitAds Sponsored
-[![Sponsored by GitAds](https://gitads.dev/v1/ad-serve?source=dddevid/musly@github)](https://gitads.dev/v1/ad-track?source=dddevid/musly@github)
-
-
-🌐 **Website:** [musly.devid.lol](https://musly.devid.lol/)
-
-[![Download Musly](https://img.shields.io/badge/Download-Musly%20v2.0.2-fa243c?style=for-the-badge&logo=github)](https://github.com/dddevid/Musly/releases/tag/v2.0.2)
-[![Navidrome](https://img.shields.io/badge/Navidrome-Supported-blue?style=for-the-badge)](https://musly.devid.lol)
-[![Jellyfin](https://img.shields.io/badge/Jellyfin-Supported-purple?style=for-the-badge)](https://musly.devid.lol)
-[![Emby](https://img.shields.io/badge/Emby-Supported-52B54B?style=for-the-badge)](https://musly.devid.lol)
-[![Subsonic](https://img.shields.io/badge/Subsonic-Supported-green?style=for-the-badge)](https://musly.devid.lol)
-[![Crowdin](https://badges.crowdin.net/musly/localized.svg)](https://crowdin.com/project/musly)
-
-## Why Choose Musly?
-
-Musly is a versatile, high-performance music client offering:
-
-- 🎵 **Multi-Source Streaming** - Stream seamlessly from Navidrome, Subsonic, Jellyfin, Emby, or Airsonic servers
-- 📁 **Local Audio Files** - Play local music stored directly on your device storage
-- 📻 **Live Web Streams & Internet Radio** - Search, browse, and listen to thousands of web radio stations worldwide
-- 🎨 **Modern & Adaptive UI** - Sleek interface with Material 3 Dynamic Colors (Material You), smooth glassmorphism, and responsive layouts
-- 🌙 **Dark/Light Mode** - Automatic theme switching based on system settings
-- 📱 **Cross-Platform & Responsive** - Fully optimized for phones, tablets, foldables, and desktop computers
-- 🎧 **Time-Synced Lyrics** - Synchronized lyrics with interactive tap-to-seek and desktop fullscreen mode
-- 📡 **Casting & Remote Playback** - Stream audio directly to Google Cast, UPnP, and DLNA devices
-- 🔀 **Smart Radio Queues & Auto-Refill** - Continuous automated queue replenishment based on your favorite tracks and artists
-- 💾 **Offline Downloads** - Download tracks, albums, and playlists for offline high-fidelity listening
-- 🚗 **Android Auto** - Full native Android Auto integration
-- 📊 **Musly Wrapped & Statistics** - Personalized listening statistics, top genres, and yearly rewinds
-
-### Prerequisites
-
-- Flutter SDK 3.10.0 or higher
-- A supported music source (Navidrome, Subsonic, Jellyfin, Emby, Web Stream, or Local Files)
-
-## Supported Platforms
-
-Musly is a cross-platform application that supports:
-- 📱 **Android**
-- 🍏 **iOS**
-- 🪟 **Windows**
-- 🐧 **Linux**
-- 🍎 **macOS**
-
-## Download Musly
-
-You can download the latest release of Musly:
-👉 **[Download Musly v2.0.2](https://github.com/dddevid/Musly/releases/tag/v2.0.2)**
-
-## Community
-
-Join our Discord community to get support, share feedback, and connect with other Musly users!
+# Musly (Veyino Edition) 🎵
 
 <div align="center">
 
-[![Discord](https://img.shields.io/badge/Discord-Join%20Community-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/k9FqpbT65M)
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-blue.svg?style=flat-square)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=flat-square&logo=flutter&logoColor=white)](https://flutter.dev)
+[![Release](https://img.shields.io/badge/Release-v2.1.0-orange?style=flat-square&logo=github)](https://github.com/ysnsk111/Musly/releases)
+[![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Desktop-brightgreen?style=flat-square)](https://github.com/ysnsk111/Musly)
+[![Architecture](https://img.shields.io/badge/ABI-arm64--v8a%20%7C%20armeabi--v7a%20%7C%20x86__64-purple?style=flat-square)](https://github.com/ysnsk111/Musly/releases)
+[![Team](https://img.shields.io/badge/Maintained%20by-Veyino%20Team-6366F1?style=flat-square)](https://veyino.org)
 
-**[Join Discord Server](https://discord.gg/k9FqpbT65M)** 💬
+**A refined, modern, and pure music streaming client for Navidrome, Subsonic, Jellyfin, Emby, and local files.**
+
+[English](README.md) • [简体中文](README_zh.md) • [Team Website](https://veyino.org) • [Releases](https://github.com/ysnsk111/Musly/releases)
 
 </div>
 
-## 💖 Support the Project
+---
 
-If you find Musly useful and want to support its development
+## 🌟 What's New in Veyino Edition (v2.1.0)
 
-| Network | Address |
-| :--- | :--- |
-| **Bitcoin (BTC)** | `bc1qrfv880kc8qamanalc5kcqs9q5wszh90e5eggyz` |
-| **Solana (SOL)** | `E3JUcjyR6UCJtppU24iDrq82FyPeV9nhL1PKHx57iPXu` |
-| **ETH / Monad / Hype** | `0x01195b0Ae97b2D461aB0C746663bFE915eb9ac7c` |
+This is an enhanced community fork of [Musly (original by dddevid)](https://github.com/dddevid/Musly) independently maintained by the **Veyino Team** (`ysnsk111`), focused on polished animations, complete edge-to-edge system adaptation, a clean user experience, and professional playback controls:
+
+- 📱 **True Edge-to-Edge Adaptation**: Seamless immersive status and navigation bar integration with edge gesture compatibility.
+- 💧 **iOS / FlClash Fluid Droplet Bottom Bar**: Responsive animated pill droplet slider inspired by iOS and FlClash Android design, featuring haptic feedback and pure dynamic coloring without energy-draining glass filters.
+- 🎶 **Interactive Drag-to-Dismiss Gesture**: Smooth interactive vertical pull-down dismiss gesture for the full-screen player with live offset translation, scaling, rounded-corner morphing, and elastic spring-back.
+- 🛡️ **Intelligent Bottom Bar Auto-Hiding**: Bottom navigation bar and MiniPlayer automatically hide when browsing Settings, eliminating bottom content clipping and occlusion.
+- 🎛️ **Salt Player Grade Audio Controls**: Hi-Res/Lossless quality badges, playback speed controls (0.5x - 2.0x), lyric timeline offset micro-tuning (±0.1s/0.5s), customizable seek intervals, and sleep timer.
+- 📴 **Robust Offline Fallback**: Automatic offline mode entry upon connection loss with prominent status banner and one-tap reconnection retry.
+- 🌏 **100% Comprehensive Localization**: Complete, natural Simplified Chinese (zh-Hans), Traditional Chinese, and multi-language support.
+- 🚫 **100% Clean & Pure Experience**: Completely removed all donation prompts, timed usage dialogs, Revolut links, and third-party sponsored popups.
 
 ---
 
-## Roadmap
-
-- [x] **Custom PC UX**: Basic desktop layout with persistent sidebar and dedicated player bar.
-- [x] **Desktop Lyrics & Fullscreen Mode**: Synced lyrics view with smooth scrolling and true fullscreen on desktop.
-- [-] **CarPlay Support**: Add a dedicated browsing interface for CarPlay. (Carplay needs a signed certificate, until the app is available on the appstore carplay wont work, only if selfsigned and with carplay enabled in the code)
-- [x] **Local Playlists**: Manage playlists locally, independent of the server.
-- [x] **Jellyfin & Emby Support**: Native connection and streaming from Jellyfin and Emby media servers.
-- [x] **Internet Radio & Web Streams**: Live radio stream exploration and playback.
-- [x] **Local Files Support**: Direct playback and library indexing of device audio files.
-- [ ] **Custom API Server**: Support for custom backend implementations and extended APIs.
-- [x] **Improved Offline Sync**: Reliable background downloading and offline caching.
-- [ ] **Tizen OS (Samsung TV) and WebOS (LG TV) Port**
-
-## Screenshots
-
-<p align="center">
-  <img src="screenshots/Screenshot_20260101_024726.png" width="200" />
-  <img src="screenshots/Screenshot_20260101_024746.png" width="200" />
-  <img src="screenshots/Screenshot_20260101_024751.png" width="200" />
-  <img src="screenshots/Screenshot_20260101_024803.png" width="200" />
-</p>
-
-## Installation
-
-1. Install dependencies:
-   ```bash
-   flutter pub get
-   ```
-2. Run the app:
-   ```bash
-   flutter run
-   ```
-
-### Connecting to Your Music Source
-
-1. Launch the app
-2. Select your music source type:
-   - **Subsonic / Navidrome**: Enter server URL, username, and password (toggle "Legacy Authentication" if needed)
-   - **Jellyfin / Emby**: Enter server URL and credentials / API token
-   - **Internet Radio**: Browse live stations and web streams directly
-   - **Local Storage**: Grant storage permission to index and play local audio files
-3. Tap "Connect" and enjoy your music!
-
-## Translations
-
-[![Crowdin](https://badges.crowdin.net/musly/localized.svg)](https://crowdin.com/project/musly)
-
-Musly is translated into 27 languages! Help translate Musly into your language:
-
-📝 **[Contribute on Crowdin](https://crowdin.com/project/musly)**
-
-See [TRANSLATIONS.md](TRANSLATIONS.md) for a complete guide on how to contribute translations.
-
-## Supported Music Sources & Servers
-
-Musly works seamlessly across a wide variety of music sources:
+## 🎵 Supported Music Sources & Media Servers
 
 - **Navidrome** - [navidrome.org](https://www.navidrome.org/)
-- **Jellyfin** - [jellyfin.org](https://jellyfin.org/)
-- **Emby** - [emby.media](https://emby.media/)
-- **Subsonic** - [subsonic.org](http://www.subsonic.org/)
-- **Airsonic / Airsonic-Advanced** - [airsonic.github.io](https://airsonic.github.io/)
-- **Gonic** - [github.com/sentriz/gonic](https://github.com/sentriz/gonic)
+- **Subsonic / Airsonic / Gonic** - [subsonic.org](http://www.subsonic.org/)
+- **Jellyfin & Emby** - [jellyfin.org](https://jellyfin.org/) / [emby.media](https://emby.media/)
 - **Web Streams & Live Radio** (Radio Browser API & custom stream URLs)
 - **Local Audio Files** (MP3, FLAC, AAC, WAV, OGG, OPUS, M4A)
 
-## License
+---
 
-> [!IMPORTANT]
-> **DO NOT redistribute this app to the Google Play Store or other commercial stores.**
+## 📦 Download & Releases
 
-This project is open source and available under the **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)** License. See the [LICENSE](LICENSE) file for details.
+Download signed Android APKs directly from the [Releases](https://github.com/ysnsk111/Musly/releases) page:
+
+| Architecture / Package | Description | Recommended For |
+| :--- | :--- | :--- |
+| **`app-arm64-v8a-release.apk`** | 64-bit ARM architecture | 99% of modern Android smartphones & tablets |
+| **`app-armeabi-v7a-release.apk`** | 32-bit legacy ARM architecture | Older devices and lightweight TV boxes |
+| **`app-x86_64-release.apk`** | 64-bit Intel/AMD architecture | Android emulators, ChromeOS, x86 devices |
+| **`musly-veyino-release.apk`** | Universal bundle package | All compatible Android devices |
 
 ---
 
-<div align="center">
-  <sub>Made with <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2764.svg" width="14" height="14" alt="❤️"> in Italy <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f1ee-1f1f9.svg" width="14" height="14" alt="🇮🇹"> by an Albanian developer <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f1e6-1f1f1.svg" width="14" height="14" alt="🇦🇱"></sub>
-</div>
+## 🛠️ Build from Source
 
-<br/>
+### Prerequisites
+- Flutter SDK `>= 3.10.0`
+- Android SDK (API 34 / NDK) & Java 17
 
-<div align="center">
+### Commands
+```bash
+# Clone the repository
+git clone https://github.com/ysnsk111/Musly.git
+cd Musly
 
-[![Views](https://komarev.com/ghpvc/?username=dddevid-Musly&label=VIEWS&color=fa243c&style=for-the-badge)](https://github.com/dddevid/Musly)
+# Fetch dependencies
+flutter pub get
 
+# Build Release APK (Per-ABI split packages)
+flutter build apk --release --split-per-abi
+```
+
+---
+
+## 👥 Veyino Team & Community
+
+- **Official Website**: [veyino.org](https://veyino.org)
+- **GitHub Maintainer**: [@ysnsk111](https://github.com/ysnsk111)
+- **Email Contact**: `veyinotm@gmail.com`
+- **Support & Inquiries**: `support@veyino.org`
+
+---
+
+## 📄 License & Attribution
+
+> [!IMPORTANT]
+> **This application is non-commercial software. DO NOT redistribute this app to commercial app stores.**
+
+- This project is licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)** License. See the [LICENSE](LICENSE) file for complete terms.
+- **Upstream Project Attribution**: This repository is a community-maintained fork of [Musly](https://github.com/dddevid/Musly) originally created by [dddevid](https://github.com/dddevid).

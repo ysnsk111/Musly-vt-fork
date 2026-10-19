@@ -96,7 +96,7 @@ class TranslationOtaService {
       }
 
       final url =
-          'https://raw.githubusercontent.com/dddevid/Musly/master/lib/l10n/app_$targetLocale.arb';
+          'https://raw.githubusercontent.com/ysnsk111/Musly/master/lib/l10n/app_$targetLocale.arb';
       final response = await _dio.get<String>(
         url,
         options: Options(responseType: ResponseType.plain),
@@ -135,7 +135,7 @@ class TranslationOtaService {
   Future<void> _syncPercentages(SharedPreferences prefs) async {
     try {
       final url =
-          'https://raw.githubusercontent.com/dddevid/Musly/master/lib/l10n/translation_percentages.json';
+          'https://raw.githubusercontent.com/ysnsk111/Musly/master/lib/l10n/translation_percentages.json';
       final res = await _dio.get<String>(
         url,
         options: Options(responseType: ResponseType.plain),
@@ -167,7 +167,7 @@ class TranslationOtaService {
   Future<void> _discoverRemoteLanguages(SharedPreferences prefs) async {
     try {
       final res = await _dio.get<dynamic>(
-        'https://api.github.com/repos/dddevid/Musly/contents/lib/l10n',
+        'https://api.github.com/repos/ysnsk111/Musly/contents/lib/l10n',
       );
 
       if (res.statusCode == 200 && res.data is List) {

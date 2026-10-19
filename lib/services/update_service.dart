@@ -45,10 +45,10 @@ class ReleaseInfo {
 }
 
 class UpdateService {
-  static const String currentVersion = '2.0.2';
+  static const String currentVersion = '2.1.0';
 
   static const String _apiUrl =
-      'https://api.github.com/repos/dddevid/Musly/releases/latest';
+      'https://api.github.com/repos/ysnsk111/Musly/releases/latest';
 
   static final _dio = Dio(
     BaseOptions(

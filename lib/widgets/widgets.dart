@@ -20,7 +20,6 @@ export 'common/pill_tab_bar.dart';
 export 'common/song_tile.dart';
 
 export 'dialogs/privacy_policy_dialog.dart';
-export 'dialogs/support_dialog.dart';
 
 export 'modals/song_options_modal.dart';
 export 'modals/server_switcher_sheet.dart';

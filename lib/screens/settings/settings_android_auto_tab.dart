@@ -73,7 +73,7 @@ class _SettingsAndroidAutoTabState extends State<SettingsAndroidAutoTab> {
     }
     
     return ListView(
-      padding: const EdgeInsets.fromLTRB(0, 16, 0, 180),
+      padding: const EdgeInsets.fromLTRB(0, 16, 0, 48),
       children: [
         SettingsSectionCard(
           title: 'Server',

@@ -17,6 +17,14 @@ class NavigationHelper {
       ValueNotifier<bool>(false);
   static final ValueNotifier<bool> isDesktopLyricsOpen =
       ValueNotifier<bool>(false);
+  static final ValueNotifier<bool> isBottomBarHidden =
+      ValueNotifier<bool>(false);
+
+  static void setBottomBarHidden(bool hidden) {
+    if (isBottomBarHidden.value != hidden) {
+      isBottomBarHidden.value = hidden;
+    }
+  }
 
   static void toggleDesktopQueue() {
     isDesktopQueueOpen.value = !isDesktopQueueOpen.value;

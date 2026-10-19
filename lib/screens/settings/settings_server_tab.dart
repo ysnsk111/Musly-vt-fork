@@ -37,7 +37,7 @@ class _SettingsServerTabState extends State<SettingsServerTab> {
         Provider.of<SubsonicService>(context, listen: false).isYoutube;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(0, 16, 0, 180),
+      padding: const EdgeInsets.fromLTRB(0, 16, 0, 48),
       children: [
         _buildActiveServerCard(context, authProvider, currentConfig, isYoutube),
         const SizedBox(height: 24),

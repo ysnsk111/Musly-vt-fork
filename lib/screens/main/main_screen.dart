@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -9,7 +8,6 @@ import 'package:musly/services/local_music_service.dart';
 import '../../widgets/navigation/tv_remote_scope.dart';
 import '../../services/tv_detection_service.dart';
 import 'package:musly/services/recommendation_service.dart';
-import 'package:musly/services/theme_service.dart';
 import 'package:musly/services/update_service.dart';
 import 'package:musly/services/usage_time_service.dart';
 import 'package:musly/theme/app_theme.dart';
@@ -132,35 +130,10 @@ class _MainScreenState extends State<MainScreen> {
         libraryProvider.initialize();
       }
 
-      UsageTimeService().initialize();
-
-      _startUsageTimeChecker();
-
       Future.delayed(const Duration(seconds: 2), () {
         if (mounted) _checkForUpdate();
       });
     });
-  }
-
-  void _startUsageTimeChecker() {
-    Future.delayed(const Duration(minutes: 2), () {
-      if (!mounted) return;
-
-      final usageService = UsageTimeService();
-      if (usageService.shouldShowDialog) {
-        _showSupportDialog();
-      } else {
-        _startUsageTimeChecker();
-      }
-    });
-  }
-
-  void _showSupportDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => const SupportDialog(),
-      barrierDismissible: true,
-    );
   }
 
   Future<void> _checkForUpdate() async {
@@ -470,7 +443,6 @@ class _MainScreenState extends State<MainScreen> {
       );
     }
 
-    final bool liquidGlass = Provider.of<ThemeService>(context).liquidGlass;
     return Selector<PlayerProvider, bool>(
       selector: (_, p) => p.currentSong != null || p.isPlayingRadio,
       builder: (context, hasCurrentSong, _) {
@@ -695,19 +667,23 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       ),
                       if (MediaQuery.of(context).viewInsets.bottom == 0)
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (hasCurrentSong) const MiniPlayer(),
-                              liquidGlass
-                                  ? _buildGlassBottomNav(context)
-                                  : _buildBottomNav(context),
-                            ],
-                          ),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: NavigationHelper.isBottomBarHidden,
+                          builder: (context, isHidden, child) {
+                            if (isHidden) return const SizedBox.shrink();
+                            return Positioned(
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (hasCurrentSong) const MiniPlayer(),
+                                  _buildBottomNav(context),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                     ],
                   ),
@@ -736,7 +712,7 @@ class _MainScreenState extends State<MainScreen> {
     SystemNavigator.pop();
   }
 
-  Widget _buildGlassBottomNav(BuildContext context) {
+  Widget _buildBottomNav(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final accent = theme.colorScheme.primary;
@@ -762,104 +738,137 @@ class _MainScreenState extends State<MainScreen> {
     ];
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(16, 4, 16, safeBottom > 0 ? safeBottom + 4 : 14),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 30.0, sigmaY: 30.0),
-          child: Container(
-            height: 64,
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0x99141418) : const Color(0xAAFFFFFF),
-              borderRadius: BorderRadius.circular(32),
-              border: Border.all(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.16)
-                    : Colors.black.withValues(alpha: 0.08),
-                width: 1.0,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.22),
-                  blurRadius: 20,
-                  offset: const Offset(0, 6),
-                ),
-              ],
+      padding: EdgeInsets.fromLTRB(
+        16,
+        4,
+        16,
+        safeBottom > 0 ? safeBottom + 4 : 14,
+      ),
+      child: Container(
+        height: 64,
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xF218181E) : const Color(0xF5FFFFFF),
+          borderRadius: BorderRadius.circular(32),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.12)
+                : Colors.black.withValues(alpha: 0.08),
+            width: 1.0,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.12),
+              blurRadius: 20,
+              offset: const Offset(0, 6),
             ),
-            child: Row(
-              children: List.generate(items.length, (idx) {
-                final item = items[idx];
-                final isSelected = _currentIndex == idx;
-                return Expanded(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      final navigatorState =
-                          NavigationHelper.appNavigatorKey.currentState;
-                      navigatorState?.popUntil((route) => route.isFirst);
+          ],
+        ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final totalWidth = constraints.maxWidth;
+            final itemWidth = totalWidth / items.length;
+            const double pillHeight = 48.0;
+            final double pillWidth = itemWidth - 12.0;
 
-                      if (idx == 2) {
-                        final now = DateTime.now();
-                        if (now.difference(_lastSearchTap).inSeconds > 3) {
-                          _searchTapCount = 0;
-                        }
-                        _searchTapCount++;
-                        _lastSearchTap = now;
-                        if (_searchTapCount >= 11) {
-                          _searchTapCount = 0;
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const FantasyScreen(),
-                            ),
-                          );
-                          return;
-                        }
-                      } else {
-                        _searchTapCount = 0;
-                      }
-
-                      setState(() => _currentIndex = idx);
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 150),
-                          child: Icon(
-                            isSelected ? item.activeIcon : item.icon,
-                            key: ValueKey(isSelected),
-                            color: isSelected
-                                ? accent
-                                : (isDark ? Colors.white54 : Colors.black38),
-                            size: 22,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          item.label,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight:
-                                isSelected ? FontWeight.w600 : FontWeight.w400,
-                            color: isSelected
-                                ? accent
-                                : (isDark ? Colors.white54 : Colors.black38),
-                          ),
-                        ),
-                      ],
+            return Stack(
+              children: [
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 320),
+                  curve: Curves.easeOutCubic,
+                  left: _currentIndex * itemWidth + 6.0,
+                  top: (constraints.maxHeight - pillHeight) / 2,
+                  width: pillWidth,
+                  height: pillHeight,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: accent.withValues(alpha: isDark ? 0.22 : 0.14),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: accent.withValues(alpha: isDark ? 0.38 : 0.28),
+                        width: 1.0,
+                      ),
                     ),
                   ),
-                );
-              }),
-            ),
-          ),
+                ),
+                Row(
+                  children: List.generate(items.length, (idx) {
+                    final item = items[idx];
+                    final isSelected = _currentIndex == idx;
+                    return Expanded(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          HapticFeedback.selectionClick();
+                          final navigatorState =
+                              NavigationHelper.appNavigatorKey.currentState;
+                          navigatorState?.popUntil((route) => route.isFirst);
+
+                          if (idx == 2) {
+                            final now = DateTime.now();
+                            if (now.difference(_lastSearchTap).inSeconds > 3) {
+                              _searchTapCount = 0;
+                            }
+                            _searchTapCount++;
+                            _lastSearchTap = now;
+                            if (_searchTapCount >= 11) {
+                              _searchTapCount = 0;
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const FantasyScreen(),
+                                ),
+                              );
+                              return;
+                            }
+                          } else {
+                            _searchTapCount = 0;
+                          }
+
+                          setState(() => _currentIndex = idx);
+                        },
+                        child: AnimatedScale(
+                          scale: isSelected ? 1.05 : 1.0,
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeOutCubic,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                isSelected ? item.activeIcon : item.icon,
+                                color: isSelected
+                                    ? accent
+                                    : (isDark
+                                        ? Colors.white60
+                                        : Colors.black54),
+                                size: 21,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                item.label,
+                                style: TextStyle(
+                                  fontSize: 10.5,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
+                                  color: isSelected
+                                      ? accent
+                                      : (isDark
+                                          ? Colors.white60
+                                          : Colors.black54),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
-  }
-
-  Widget _buildBottomNav(BuildContext context) {
-    return _buildGlassBottomNav(context);
   }
 }
 

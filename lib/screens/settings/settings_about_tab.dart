@@ -5,7 +5,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:musly/l10n/app_localizations.dart';
 import 'package:musly/theme/app_theme.dart';
 import 'package:musly/services/analytics_service.dart';
-import 'package:musly/widgets/dialogs/support_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:musly/widgets/settings/settings_section_card.dart';
 import 'package:musly/widgets/settings/settings_list_tile.dart';
@@ -48,7 +47,7 @@ class _SettingsAboutTabState extends State<SettingsAboutTab> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.fromLTRB(0, 16, 0, 180),
+      padding: const EdgeInsets.fromLTRB(0, 16, 0, 48),
       children: [
         SettingsSectionCard(
           title: AppLocalizations.of(context)!.sectionAboutInformation,
@@ -129,8 +128,8 @@ class _SettingsAboutTabState extends State<SettingsAboutTab> {
               context,
               icon: Icons.code_rounded,
               title: 'Veyino GitHub 仓库',
-              subtitle: 'github.com/ysnsk111',
-              url: 'https://github.com/ysnsk111',
+              subtitle: 'github.com/ysnsk111/Musly',
+              url: 'https://github.com/ysnsk111/Musly',
             ),
             _buildDivider(context),
             _buildLinkTile(
@@ -144,9 +143,9 @@ class _SettingsAboutTabState extends State<SettingsAboutTab> {
             _buildActionTile(
               context,
               icon: CupertinoIcons.sparkles,
-              iconColor: const Color(0xFF6366F1),
               title: AppLocalizations.of(context)!.welcomeTourTitle,
               subtitle: AppLocalizations.of(context)!.welcomeTourSubtitle,
+              iconColor: const Color(0xFF6366F1),
               onTap: () {
                 Navigator.of(context).push(
                   CupertinoPageRoute(
@@ -184,8 +183,17 @@ class _SettingsAboutTabState extends State<SettingsAboutTab> {
         ),
         const SizedBox(height: 24),
         SettingsSectionCard(
-          title: AppLocalizations.of(context)!.sectionAboutSupport,
+          title: '更新与反馈',
           children: [
+            _buildActionTile(
+              context,
+              icon: CupertinoIcons.arrow_clockwise_circle_fill,
+              iconColor: const Color(0xFF3B82F6),
+              title: '检查更新',
+              subtitle: '检查 Veyino 版本更新',
+              onTap: () => _manualCheckForUpdate(context),
+            ),
+            _buildDivider(context),
             _buildActionTile(
               context,
               icon: CupertinoIcons.star_fill,
@@ -197,15 +205,6 @@ class _SettingsAboutTabState extends State<SettingsAboutTab> {
                   ? AppLocalizations.of(context)!.alreadyRatedSubtitle
                   : AppLocalizations.of(context)!.shareFeedbackSubtitle,
               onTap: _hasRated ? null : () => _showRatingDialog(context),
-            ),
-            _buildDivider(context),
-            _buildActionTile(
-              context,
-              icon: CupertinoIcons.heart_fill,
-              iconColor: const Color(0xFFFF2D55),
-              title: AppLocalizations.of(context)!.supportMuslyTitle,
-              subtitle: AppLocalizations.of(context)!.supportMuslySubtitle,
-              onTap: () => _showSupportDialog(context),
             ),
           ],
         ),
@@ -386,8 +385,44 @@ class _SettingsAboutTabState extends State<SettingsAboutTab> {
     }
   }
 
-  void _showSupportDialog(BuildContext context) {
-    showDialog(context: context, builder: (context) => const SupportDialog());
+  Future<void> _manualCheckForUpdate(BuildContext context) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('正在检查更新...'),
+        duration: Duration(seconds: 1),
+      ),
+    );
+    final release = await UpdateService.checkForUpdate();
+    if (!context.mounted) return;
+    if (release == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('已是最新版本！'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('发现新版本: v${release.version}'),
+          content: Text(UpdateService.stripMarkdown(release.body)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('稍后'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                _openUrl(release.htmlUrl);
+              },
+              child: const Text('前往更新'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   void _showRatingDialog(BuildContext context) async {
