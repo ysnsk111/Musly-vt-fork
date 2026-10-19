@@ -1,10 +1,13 @@
 name: Build & Release
 
 on:
+  push:
+    tags:
+      - 'v*'
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version number (e.g., 1.0.8)'
+        description: 'Version number (e.g., 2.1.1)'
         required: true
         type: string
 
@@ -384,12 +387,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Determine Version
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            VERSION=${GITHUB_REF_NAME#v}
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+
       - name: Create or Update Tag
+        if: github.event_name == 'workflow_dispatch'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -f -a "v${{ github.event.inputs.version }}" -m "Release v${{ github.event.inputs.version }}"
-          git push --force origin "v${{ github.event.inputs.version }}"
+          git tag -f -a "${{ steps.get_version.outputs.tag }}" -m "Release ${{ steps.get_version.outputs.tag }}"
+          git push --force origin "${{ steps.get_version.outputs.tag }}"
 
       - name: Download Android Artifacts
         uses: actions/download-artifact@v4
@@ -457,10 +472,10 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ github.event.inputs.version }}
-          name: Musly v${{ github.event.inputs.version }}
+          tag_name: ${{ steps.get_version.outputs.tag }}
+          name: Musly Veyino Edition ${{ steps.get_version.outputs.tag }}
           body: |
-            ## 🎉 Musly v${{ github.event.inputs.version }}
+            ## 🎉 Musly Veyino Edition ${{ steps.get_version.outputs.tag }}
 
             ### 📦 Downloads
 
