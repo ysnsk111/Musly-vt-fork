@@ -3,7 +3,47 @@
 All notable changes to Musly will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [2.1.0] - 2026-10-19 (Veyino Edition)
+
+### Added
+
+- **iOS / FlClash Fluid Animated Droplet Navigation Bar**
+  - Replaced plain icon shifts with an animated droplet pill indicator with haptic feedback, fluid translation, and clean zero-overhead dynamic coloring without heavy blur drain.
+  - Active tab smoothly scales with accent highlights while inactive tabs present clean, balanced secondary opacity.
+- **Interactive Drag-to-Dismiss & Spring Physics (Now Playing Screen)**
+  - Implemented interactive vertical swipe-down gesture to dismiss the full-screen player with live finger tracking.
+  - Added dynamic scaling, progressive corner radius morphing, and elastic spring-back bounce when released below threshold.
+- **Intelligent Bottom Bar Auto-Hiding**
+  - Bottom navigation bar and MiniPlayer automatically hide with zero latency upon navigating into Settings screens.
+  - Completely eliminates UI overlap, bottom content clipping, and hidden save/action buttons in all settings sub-tabs.
+- **Salt Player Grade Audio Enhancements**
+  - Integrated Lossless/Hi-Res stream quality badges directly on the player screen.
+  - Added stepless playback speed selector (0.5x – 2.0x).
+  - Added lyric timeline sync micro-tuning controls (±0.1s / ±0.5s) to solve lyrics desynchronization.
+  - Added customizable seek intervals (5s, 10s, 15s, 30s) and sleep timer.
+  - Added tactile haptic feedback options for playback interactions.
+- **Robust Offline Fallback & Live Connection Status**
+  - Automatic seamless fallback into offline mode when network or server is disconnected.
+  - Top status banner clearly indicates offline mode with a 1-tap "Retry" reconnection button that re-probes the server and syncs the music library.
+- **100% Comprehensive Multi-language Localization**
+  - 100% complete and refined Simplified Chinese (zh-Hans), Traditional Chinese, English, etc.
+- **Multilingual Documentation & Badges**
+  - Added comprehensive `README.md` (English) and `README_zh.md` (Chinese) with platform, architecture, version, and license badges.
+
+### Changed
+
+- **Clean & Pure Experience**
+  - Completely purged all donation dialogs, 30-minute timed usage prompts, Revolut links, and third-party sponsored banners.
+- **Fork Update & OTA Translation Infrastructure**
+  - Re-routed all update check endpoints and live OTA translation synchronization services to `ysnsk111/Musly`.
+  - Added manual "Check for Updates" trigger in Settings > About.
+- **License & Attribution Compliance**
+  - Maintained full compliance with Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0).
+  - Prominently attributed upstream author `dddevid/Musly` in Settings > About and documentation.
+
+### Fixed
+
+- Resolved content obstruction in Settings where the bottom floating navigation bar covered lower preference tiles and options.
 
 ## [2.0.2] - 2026-08-26
 
