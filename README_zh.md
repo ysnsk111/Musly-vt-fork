@@ -4,14 +4,14 @@
 
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/开源协议-CC%20BY--NC--SA%204.0-blue.svg?style=flat-square)](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans)
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=flat-square&logo=flutter&logoColor=white)](https://flutter.dev)
-[![Release](https://img.shields.io/badge/版本-v2.1.0-orange?style=flat-square&logo=github)](https://github.com/ysnsk111/Musly/releases)
-[![Platform](https://img.shields.io/badge/支持平台-Android%20%7C%20iOS%20%7C%20Desktop-brightgreen?style=flat-square)](https://github.com/ysnsk111/Musly)
-[![Architecture](https://img.shields.io/badge/架构-arm64--v8a%20%7C%20armeabi--v7a%20%7C%20x86__64-purple?style=flat-square)](https://github.com/ysnsk111/Musly/releases)
+[![Release](https://img.shields.io/badge/版本-v2.1.0-orange?style=flat-square&logo=github)](https://github.com/ysnsk111/Musly-vt-fork/releases)
+[![Platform](https://img.shields.io/badge/支持平台-Android%20%7C%20iOS%20%7C%20Desktop-brightgreen?style=flat-square)](https://github.com/ysnsk111/Musly-vt-fork)
+[![Architecture](https://img.shields.io/badge/架构-arm64--v8a%20%7C%20armeabi--v7a%20%7C%20x86__64-purple?style=flat-square)](https://github.com/ysnsk111/Musly-vt-fork/releases)
 [![Team](https://img.shields.io/badge/维护团队-Veyino%20Team-6366F1?style=flat-square)](https://veyino.org)
 
 **一款优雅、现代化且纯粹的跨平台音乐流媒体播放器，支持 Navidrome、Subsonic、Jellyfin、Emby 及本地音乐。**
 
-[English](README.md) • [简体中文](README_zh.md) • [团队官网](https://veyino.org) • [Releases 下载](https://github.com/ysnsk111/Musly/releases)
+[English](README.md) • [简体中文](README_zh.md) • [团队官网](https://veyino.org) • [Releases 下载](https://github.com/ysnsk111/Musly-vt-fork/releases)
 
 </div>
 
@@ -49,7 +49,7 @@
 
 ## 📦 安装包下载与架构说明
 
-前往 [Releases 发行页面](https://github.com/ysnsk111/Musly/releases) 即可直接下载已自签名的 APK 文件：
+前往 [Releases 发行页面](https://github.com/ysnsk111/Musly-vt-fork/releases) 即可直接下载已自签名的 APK 文件：
 
 | 架构 / 文件名 | 说明 | 适用机型 |
 | :--- | :--- | :--- |
@@ -69,7 +69,7 @@
 ### 快速构建指令
 ```bash
 # 克隆仓库
-git clone https://github.com/ysnsk111/Musly.git
+git clone https://github.com/ysnsk111/Musly-vt-fork.git
 cd Musly
 
 # 获取依赖

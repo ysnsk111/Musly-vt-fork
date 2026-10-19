@@ -128,8 +128,8 @@ class _SettingsAboutTabState extends State<SettingsAboutTab> {
               context,
               icon: Icons.code_rounded,
               title: 'Veyino GitHub 仓库',
-              subtitle: 'github.com/ysnsk111/Musly',
-              url: 'https://github.com/ysnsk111/Musly',
+              subtitle: 'github.com/ysnsk111/Musly-vt-fork',
+              url: 'https://github.com/ysnsk111/Musly-vt-fork',
             ),
             _buildDivider(context),
             _buildLinkTile(

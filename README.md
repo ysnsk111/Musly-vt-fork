@@ -4,14 +4,14 @@
 
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-blue.svg?style=flat-square)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=flat-square&logo=flutter&logoColor=white)](https://flutter.dev)
-[![Release](https://img.shields.io/badge/Release-v2.1.0-orange?style=flat-square&logo=github)](https://github.com/ysnsk111/Musly/releases)
-[![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Desktop-brightgreen?style=flat-square)](https://github.com/ysnsk111/Musly)
-[![Architecture](https://img.shields.io/badge/ABI-arm64--v8a%20%7C%20armeabi--v7a%20%7C%20x86__64-purple?style=flat-square)](https://github.com/ysnsk111/Musly/releases)
+[![Release](https://img.shields.io/badge/Release-v2.1.0-orange?style=flat-square&logo=github)](https://github.com/ysnsk111/Musly-vt-fork/releases)
+[![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Desktop-brightgreen?style=flat-square)](https://github.com/ysnsk111/Musly-vt-fork)
+[![Architecture](https://img.shields.io/badge/ABI-arm64--v8a%20%7C%20armeabi--v7a%20%7C%20x86__64-purple?style=flat-square)](https://github.com/ysnsk111/Musly-vt-fork/releases)
 [![Team](https://img.shields.io/badge/Maintained%20by-Veyino%20Team-6366F1?style=flat-square)](https://veyino.org)
 
 **A refined, modern, and pure music streaming client for Navidrome, Subsonic, Jellyfin, Emby, and local files.**
 
-[English](README.md) • [简体中文](README_zh.md) • [Team Website](https://veyino.org) • [Releases](https://github.com/ysnsk111/Musly/releases)
+[English](README.md) • [简体中文](README_zh.md) • [Team Website](https://veyino.org) • [Releases](https://github.com/ysnsk111/Musly-vt-fork/releases)
 
 </div>
 
@@ -44,7 +44,7 @@ This is an enhanced community fork of [Musly (original by dddevid)](https://gith
 
 ## 📦 Download & Releases
 
-Download signed Android APKs directly from the [Releases](https://github.com/ysnsk111/Musly/releases) page:
+Download signed Android APKs directly from the [Releases](https://github.com/ysnsk111/Musly-vt-fork/releases) page:
 
 | Architecture / Package | Description | Recommended For |
 | :--- | :--- | :--- |
@@ -64,7 +64,7 @@ Download signed Android APKs directly from the [Releases](https://github.com/ysn
 ### Commands
 ```bash
 # Clone the repository
-git clone https://github.com/ysnsk111/Musly.git
+git clone https://github.com/ysnsk111/Musly-vt-fork.git
 cd Musly
 
 # Fetch dependencies

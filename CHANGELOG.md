@@ -35,7 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **Clean & Pure Experience**
   - Completely purged all donation dialogs, 30-minute timed usage prompts, Revolut links, and third-party sponsored banners.
 - **Fork Update & OTA Translation Infrastructure**
-  - Re-routed all update check endpoints and live OTA translation synchronization services to `ysnsk111/Musly`.
+  - Re-routed all update check endpoints and live OTA translation synchronization services to `ysnsk111/Musly-vt-fork`.
   - Added manual "Check for Updates" trigger in Settings > About.
 - **License & Attribution Compliance**
   - Maintained full compliance with Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0).
