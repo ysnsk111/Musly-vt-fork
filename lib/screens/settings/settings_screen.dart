@@ -10,7 +10,6 @@ import 'settings_display_tab.dart';
 import 'settings_about_tab.dart';
 import 'settings_android_auto_tab.dart';
 import 'package:musly/theme/app_theme.dart';
-import 'package:musly/utils/navigation_helper.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -34,7 +33,6 @@ class _SettingsScreenState extends State<SettingsScreen>
   @override
   void initState() {
     super.initState();
-    NavigationHelper.setBottomBarHidden(true);
     _tabController = TabController(length: 6, vsync: this);
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
@@ -47,7 +45,6 @@ class _SettingsScreenState extends State<SettingsScreen>
 
   @override
   void dispose() {
-    NavigationHelper.setBottomBarHidden(false);
     _tabController.dispose();
     super.dispose();
   }

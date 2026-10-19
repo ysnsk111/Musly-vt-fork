@@ -311,7 +311,7 @@ class _SearchScreenState extends State<SearchScreen> {
         subsonicService.isYoutube || authProvider.config?.isYoutube == true;
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(hPad, 16, hPad, 48),
+      padding: EdgeInsets.fromLTRB(hPad, 16, hPad, 180),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

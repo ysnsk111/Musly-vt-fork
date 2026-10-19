@@ -47,7 +47,7 @@ class _SettingsAboutTabState extends State<SettingsAboutTab> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.fromLTRB(0, 16, 0, 48),
+      padding: const EdgeInsets.fromLTRB(0, 16, 0, 180),
       children: [
         SettingsSectionCard(
           title: AppLocalizations.of(context)!.sectionAboutInformation,

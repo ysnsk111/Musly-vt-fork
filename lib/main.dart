@@ -458,9 +458,9 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
 
     switch (authProvider.state) {
       case AuthState.unknown:
-        return const Scaffold(
-          backgroundColor: Colors.black,
-          body: Center(child: CircularProgressIndicator()),
+        return _AuthenticatingScreen(
+          hasOfflineContent: authProvider.hasOfflineContent,
+          onEnterOfflineMode: () => authProvider.enterOfflineMode(),
         );
       case AuthState.authenticated:
         WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -517,14 +517,31 @@ class _AuthenticatingScreen extends StatefulWidget {
   State<_AuthenticatingScreen> createState() => _AuthenticatingScreenState();
 }
 
-class _AuthenticatingScreenState extends State<_AuthenticatingScreen> {
+class _AuthenticatingScreenState extends State<_AuthenticatingScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animController;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _glowAnimation;
   bool _showSlowWarning = false;
   Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer(const Duration(seconds: 5), () {
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    )..repeat(reverse: true);
+
+    _scaleAnimation = Tween<double>(begin: 0.92, end: 1.08).animate(
+      CurvedAnimation(parent: _animController, curve: Curves.easeInOutCubic),
+    );
+
+    _glowAnimation = Tween<double>(begin: 0.35, end: 0.85).animate(
+      CurvedAnimation(parent: _animController, curve: Curves.easeInOutCubic),
+    );
+
+    _timer = Timer(const Duration(seconds: 4), () {
       if (mounted) {
         setState(() {
           _showSlowWarning = true;
@@ -535,42 +552,93 @@ class _AuthenticatingScreenState extends State<_AuthenticatingScreen> {
 
   @override
   void dispose() {
+    _animController.dispose();
     _timer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF090A0E),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CircularProgressIndicator(),
+            AnimatedBuilder(
+              animation: _animController,
+              builder: (context, child) {
+                return Transform.scale(
+                  scale: _scaleAnimation.value,
+                  child: Container(
+                    width: 108,
+                    height: 108,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFE8115B)
+                              .withValues(alpha: _glowAnimation.value * 0.45),
+                          blurRadius: 36,
+                          spreadRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: Image.asset(
+                      'assets/logo.png',
+                      width: 108,
+                      height: 108,
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 36),
+            const Text(
+              'Musly',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.2,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Veyino Edition',
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.5),
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.8,
+              ),
+            ),
             if (_showSlowWarning) ...[
               const SizedBox(height: 32),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: Text(
-                  'La connessione ci sta mettendo un po\'...',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey,
+                  '正在建立安全连接...',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.6),
+                    fontSize: 13,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ),
               if (widget.hasOfflineContent) ...[
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
                 FilledButton.icon(
-                  onPressed: widget.onEnterOfflineMode,
-                  icon: const Icon(Icons.offline_pin_rounded),
-                  label: Text(
-                    AppLocalizations.of(context)?.offlineModeQuestion ??
-                        'Offline mode?',
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFF1F2937),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
+                  onPressed: widget.onEnterOfflineMode,
+                  icon: const Icon(Icons.offline_pin_rounded, size: 18),
+                  label: const Text('立即进入离线模式'),
                 ),
               ],
             ],

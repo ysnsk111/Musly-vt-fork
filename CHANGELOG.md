@@ -4,6 +4,17 @@ All notable changes to Musly will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [2.1.2] - 2026-10-19 (Veyino Edition)
+
+### Added
+- **Native Frosted Glass Dynamic Blur Navigation Bar**: Re-introduced `BackdropFilter` real-time dynamic blur to the droplet navigation bar with transparent tinting.
+- **Pulsating Logo App Startup Animation**: Replaced raw circular progress wheel with a branded, breathing logo pulse and glow animation during connection checks.
+- **Fast Offline Fallback**: Ping timeouts reduced to 4 seconds with 2 attempts, ensuring instant fallback to offline mode instead of indefinite hanging.
+
+### Fixed
+- **Settings Screen Rendering**: Re-architected mobile layout and removed full bottom bar hiding lock to eliminate blank/black screen upon opening settings.
+- **Content Bottom Clearance**: Increased scroll padding across all settings tabs and search browse sections to 180px, eliminating any text occlusion by the bottom navigation bar and mini player.
+
 ## [2.1.1] - 2026-10-19 (Veyino Edition)
 
 ### Added

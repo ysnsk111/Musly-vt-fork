@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -744,26 +745,32 @@ class _MainScreenState extends State<MainScreen> {
         16,
         safeBottom > 0 ? safeBottom + 4 : 14,
       ),
-      child: Container(
-        height: 64,
-        decoration: BoxDecoration(
-          color: isDark ? const Color(0xF218181E) : const Color(0xF5FFFFFF),
-          borderRadius: BorderRadius.circular(32),
-          border: Border.all(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.12)
-                : Colors.black.withValues(alpha: 0.08),
-            width: 1.0,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.12),
-              blurRadius: 20,
-              offset: const Offset(0, 6),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(32),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+          child: Container(
+            height: 64,
+            decoration: BoxDecoration(
+              color: isDark
+                  ? const Color(0xCC16161D)
+                  : const Color(0xCCFFFFFF),
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.15)
+                    : Colors.black.withValues(alpha: 0.08),
+                width: 1.0,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.12),
+                  blurRadius: 20,
+                  offset: const Offset(0, 6),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: LayoutBuilder(
+            child: LayoutBuilder(
           builder: (context, constraints) {
             final totalWidth = constraints.maxWidth;
             final itemWidth = totalWidth / items.length;
@@ -868,7 +875,9 @@ class _MainScreenState extends State<MainScreen> {
           },
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 }
 

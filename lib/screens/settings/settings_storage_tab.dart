@@ -116,7 +116,7 @@ class _SettingsStorageTabState extends State<SettingsStorageTab> {
         Provider.of<SubsonicService>(context, listen: false).isYoutube;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(0, 16, 0, 48),
+      padding: const EdgeInsets.fromLTRB(0, 16, 0, 180),
       children: [
         SettingsSectionCard(
           title: AppLocalizations.of(context)!.sectionCacheSettings,
