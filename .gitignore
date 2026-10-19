@@ -37,6 +37,7 @@ test_server_config.json
 .pub-cache/
 .pub/
 /build/
+/android/build/
 /coverage/
 
 # Symbolication related
