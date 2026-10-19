@@ -27,6 +27,7 @@ class LyricsLineWidget extends StatelessWidget {
     final isCentered = uiSettings.getLyricsAlignment() == 'center';
     final blurUnfocused = uiSettings.getLyricsBlurUnfocused();
     final glowEffect = uiSettings.getLyricsGlowEffect();
+    final baseFontSize = uiSettings.getLyricsFontSize();
     final textAlign = isCentered ? TextAlign.center : TextAlign.left;
     final alignment = isCentered ? Alignment.center : Alignment.centerLeft;
     final isCurrent = state == LyricLineState.current;
@@ -41,8 +42,8 @@ class LyricsLineWidget extends StatelessWidget {
     );
 
     Widget content = line.hasWords && isCurrent
-        ? _buildWordByWord(textAlign, glowEffect)
-        : _buildLineLevel(textAlign, glowEffect, isCurrent);
+        ? _buildWordByWord(textAlign, glowEffect, baseFontSize)
+        : _buildLineLevel(textAlign, glowEffect, isCurrent, baseFontSize);
 
     if (blurUnfocused && state == LyricLineState.future) {
       final double sigma = (distance * 0.7).clamp(0.0, 2.5);
@@ -80,12 +81,14 @@ class LyricsLineWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildLineLevel(TextAlign textAlign, bool glowEffect, bool isCurrent) {
+  Widget _buildLineLevel(
+      TextAlign textAlign, bool glowEffect, bool isCurrent, double baseFontSize) {
+    final currentSize = baseFontSize + 3.0;
     return Text(
       line.text,
       textAlign: textAlign,
       style: TextStyle(
-        fontSize: isCurrent ? 25 : 22,
+        fontSize: isCurrent ? currentSize : baseFontSize,
         fontWeight: isCurrent ? FontWeight.w800 : FontWeight.w600,
         color: Colors.white,
         height: 1.42,
@@ -105,7 +108,9 @@ class LyricsLineWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildWordByWord(TextAlign textAlign, bool glowEffect) {
+  Widget _buildWordByWord(
+      TextAlign textAlign, bool glowEffect, double baseFontSize) {
+    final currentSize = baseFontSize + 3.0;
     return RichText(
       textAlign: textAlign,
       text: TextSpan(
@@ -135,7 +140,7 @@ class LyricsLineWidget extends StatelessWidget {
               child: Text(
                 '${word.text} ',
                 style: TextStyle(
-                  fontSize: 25,
+                  fontSize: currentSize,
                   fontWeight: FontWeight.w800,
                   color: Colors.white,
                   height: 1.42,

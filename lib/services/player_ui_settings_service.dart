@@ -53,6 +53,18 @@ class PlayerUiSettingsService {
   static const String _keyHapticFeedback = 'player_haptic_feedback';
   final ValueNotifier<bool> hapticFeedbackNotifier = ValueNotifier(true);
 
+  static const String _keySkipSilence = 'player_skip_silence';
+  final ValueNotifier<bool> skipSilenceNotifier = ValueNotifier(false);
+
+  static const String _keyLyricsFontSize = 'player_lyrics_font_size';
+  final ValueNotifier<double> lyricsFontSizeNotifier = ValueNotifier(22.0);
+
+  static const String _keyWaveformProgress = 'player_waveform_progress';
+  final ValueNotifier<bool> waveformProgressNotifier = ValueNotifier(false);
+
+  static const String _keyNowPlayingBgAnimation = 'player_nowplaying_bg_anim';
+  final ValueNotifier<bool> nowPlayingBgAnimationNotifier = ValueNotifier(true);
+
   Future<void> initialize() async {
     _prefs ??= await SharedPreferences.getInstance();
     showVolumeSliderNotifier.value = getShowVolumeSlider();
@@ -73,6 +85,10 @@ class PlayerUiSettingsService {
     lyricsSyncOffsetMsNotifier.value = getLyricsSyncOffsetMs();
     seekStepSecondsNotifier.value = getSeekStepSeconds();
     hapticFeedbackNotifier.value = getHapticFeedback();
+    skipSilenceNotifier.value = getSkipSilence();
+    lyricsFontSizeNotifier.value = getLyricsFontSize();
+    waveformProgressNotifier.value = getWaveformProgress();
+    nowPlayingBgAnimationNotifier.value = getNowPlayingBgAnimation();
   }
 
   Future<void> setShowLiveLyricUnderArtwork(bool show) async {
@@ -255,6 +271,46 @@ class PlayerUiSettingsService {
     return _prefs?.getBool(_keyHapticFeedback) ?? true;
   }
 
+  Future<void> setSkipSilence(bool enabled) async {
+    await initialize();
+    await _prefs!.setBool(_keySkipSilence, enabled);
+    skipSilenceNotifier.value = enabled;
+  }
+
+  bool getSkipSilence() {
+    return _prefs?.getBool(_keySkipSilence) ?? false;
+  }
+
+  Future<void> setLyricsFontSize(double size) async {
+    await initialize();
+    await _prefs!.setDouble(_keyLyricsFontSize, size);
+    lyricsFontSizeNotifier.value = size;
+  }
+
+  double getLyricsFontSize() {
+    return _prefs?.getDouble(_keyLyricsFontSize) ?? 22.0;
+  }
+
+  Future<void> setWaveformProgress(bool enabled) async {
+    await initialize();
+    await _prefs!.setBool(_keyWaveformProgress, enabled);
+    waveformProgressNotifier.value = enabled;
+  }
+
+  bool getWaveformProgress() {
+    return _prefs?.getBool(_keyWaveformProgress) ?? false;
+  }
+
+  Future<void> setNowPlayingBgAnimation(bool enabled) async {
+    await initialize();
+    await _prefs!.setBool(_keyNowPlayingBgAnimation, enabled);
+    nowPlayingBgAnimationNotifier.value = enabled;
+  }
+
+  bool getNowPlayingBgAnimation() {
+    return _prefs?.getBool(_keyNowPlayingBgAnimation) ?? true;
+  }
+
   void dispose() {
     showStarRatingsNotifier.dispose();
     showMiniPlayerHeartNotifier.dispose();
@@ -272,5 +328,9 @@ class PlayerUiSettingsService {
     lyricsSyncOffsetMsNotifier.dispose();
     seekStepSecondsNotifier.dispose();
     hapticFeedbackNotifier.dispose();
+    skipSilenceNotifier.dispose();
+    lyricsFontSizeNotifier.dispose();
+    waveformProgressNotifier.dispose();
+    nowPlayingBgAnimationNotifier.dispose();
   }
 }

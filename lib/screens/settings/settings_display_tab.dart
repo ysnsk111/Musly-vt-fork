@@ -155,6 +155,10 @@ class _SettingsDisplayTabState extends State<SettingsDisplayTab> {
             _buildLyricsAlignmentSelector(),
             const SettingsDivider(),
             _buildLyricsGlowToggle(),
+            const SettingsDivider(),
+            _buildLyricsFontSizeSlider(),
+            const SettingsDivider(),
+            _buildNowPlayingBgAnimationToggle(),
           ],
         ),
         const SizedBox(height: 24),
@@ -885,6 +889,47 @@ class _SettingsDisplayTabState extends State<SettingsDisplayTab> {
       onChanged: (val) async {
         await _playerUiSettings.setLyricsGlowEffect(val);
         setState(() => _lyricsGlowEffect = val);
+      },
+    );
+  }
+
+  Widget _buildLyricsFontSizeSlider() {
+    return ValueListenableBuilder<double>(
+      valueListenable: _playerUiSettings.lyricsFontSizeNotifier,
+      builder: (context, fontSize, _) {
+        return ListTile(
+          title: const Text('歌词字体大小'),
+          subtitle: Slider(
+            value: fontSize.clamp(16.0, 32.0),
+            min: 16.0,
+            max: 32.0,
+            divisions: 8,
+            label: '${fontSize.toInt()}sp',
+            onChanged: (val) async {
+              await _playerUiSettings.setLyricsFontSize(val);
+            },
+          ),
+          trailing: Text(
+            '${fontSize.toInt()}sp',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildNowPlayingBgAnimationToggle() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: _playerUiSettings.nowPlayingBgAnimationNotifier,
+      builder: (context, enabled, _) {
+        return SwitchListTile.adaptive(
+          title: const Text('播放页动态色彩流动'),
+          subtitle: const Text('在正在播放页面展现富有层次的专辑色彩流动微动效'),
+          value: enabled,
+          onChanged: (val) async {
+            await _playerUiSettings.setNowPlayingBgAnimation(val);
+          },
+        );
       },
     );
   }

@@ -3,6 +3,18 @@
 All notable changes to Musly will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+
+## [2.1.1] - 2026-10-19 (Veyino Edition)
+
+### Added
+- **More Player & UI Customization Settings (Salt Player Style)**
+  - Added "Skip Silence" (跳过静音片段) option to bypass unvoiced intro/outro silence.
+  - Added "Waveform Progress Bar" (波形风格进度条) toggle.
+  - Added adjustable "Lyrics Font Size" (歌词字体大小) slider (16sp – 32sp) with live scaling.
+  - Added "Now Playing Dynamic Color Flow" (播放页动态色彩流动) setting.
+- **Enhanced Physics & Spring Gesture**
+  - Fine-tuned drag-to-dismiss threshold (150px / 320px/s) and spring duration with an iOS-style cubic rebound curve.
+
 ## [2.1.0] - 2026-10-19 (Veyino Edition)
 
 ### Added

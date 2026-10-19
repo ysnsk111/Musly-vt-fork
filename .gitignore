@@ -38,6 +38,7 @@ test_server_config.json
 .pub/
 /build/
 /android/build/
+.kotlin/
 /coverage/
 
 # Symbolication related

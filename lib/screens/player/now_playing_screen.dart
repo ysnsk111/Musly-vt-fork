@@ -70,7 +70,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
     super.initState();
     _springController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 260),
+      duration: const Duration(milliseconds: 320),
     )..addListener(() {
         if (_springAnimation != null) {
           setState(() {
@@ -216,7 +216,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
 
   void _onVerticalDragEnd(DragEndDetails details) {
     final velocity = details.primaryVelocity ?? 0;
-    if (_dragOffset > 130 || velocity > 280) {
+    if (_dragOffset > 150 || velocity > 320) {
       Navigator.of(context).pop();
     } else if (_dragOffset > 0) {
       _springAnimation = Tween<double>(
@@ -225,7 +225,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
       ).animate(
         CurvedAnimation(
           parent: _springController,
-          curve: Curves.easeOutCubic,
+          curve: const Cubic(0.2, 0.9, 0.3, 1.0),
         ),
       );
       _springController.forward(from: 0.0);

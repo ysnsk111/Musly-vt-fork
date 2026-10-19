@@ -199,6 +199,34 @@ class _SettingsPlaybackTabState extends State<SettingsPlaybackTab> {
           },
         ),
         const SettingsDivider(),
+        ValueListenableBuilder<bool>(
+          valueListenable: uiSettings.skipSilenceNotifier,
+          builder: (context, skipSilence, _) {
+            return SettingsSwitchTile(
+              gradientColors: const [Color(0xFFEC4899), Color(0xFFF43F5E)],
+              icon: Icons.graphic_eq_rounded,
+              title: '跳过静音片段 (Salt Player 风格)',
+              subtitle: '自动快进音乐起止处的无声和极低电平区域',
+              value: skipSilence,
+              onChanged: (v) => uiSettings.setSkipSilence(v),
+            );
+          },
+        ),
+        const SettingsDivider(),
+        ValueListenableBuilder<bool>(
+          valueListenable: uiSettings.waveformProgressNotifier,
+          builder: (context, waveform, _) {
+            return SettingsSwitchTile(
+              gradientColors: const [Color(0xFF06B6D4), Color(0xFF3B82F6)],
+              icon: Icons.waves_rounded,
+              title: '波形风格进度条',
+              subtitle: '播放器底部启用拟物动态波形进度条',
+              value: waveform,
+              onChanged: (v) => uiSettings.setWaveformProgress(v),
+            );
+          },
+        ),
+        const SettingsDivider(),
         ValueListenableBuilder<int>(
           valueListenable: uiSettings.lyricsSyncOffsetMsNotifier,
           builder: (context, offset, _) {
