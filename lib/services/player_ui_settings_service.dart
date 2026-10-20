@@ -65,6 +65,9 @@ class PlayerUiSettingsService {
   static const String _keyNowPlayingBgAnimation = 'player_nowplaying_bg_anim';
   final ValueNotifier<bool> nowPlayingBgAnimationNotifier = ValueNotifier(true);
 
+  static const String _keyPlayerLayoutStyle = 'player_layout_style';
+  final ValueNotifier<String> playerLayoutStyleNotifier = ValueNotifier('standard');
+
   Future<void> initialize() async {
     _prefs ??= await SharedPreferences.getInstance();
     showVolumeSliderNotifier.value = getShowVolumeSlider();
@@ -89,6 +92,7 @@ class PlayerUiSettingsService {
     lyricsFontSizeNotifier.value = getLyricsFontSize();
     waveformProgressNotifier.value = getWaveformProgress();
     nowPlayingBgAnimationNotifier.value = getNowPlayingBgAnimation();
+    playerLayoutStyleNotifier.value = getPlayerLayoutStyle();
   }
 
   Future<void> setShowLiveLyricUnderArtwork(bool show) async {
@@ -311,7 +315,18 @@ class PlayerUiSettingsService {
     return _prefs?.getBool(_keyNowPlayingBgAnimation) ?? true;
   }
 
+  Future<void> setPlayerLayoutStyle(String style) async {
+    await initialize();
+    await _prefs!.setString(_keyPlayerLayoutStyle, style);
+    playerLayoutStyleNotifier.value = style;
+  }
+
+  String getPlayerLayoutStyle() {
+    return _prefs?.getString(_keyPlayerLayoutStyle) ?? 'standard';
+  }
+
   void dispose() {
+    playerLayoutStyleNotifier.dispose();
     showStarRatingsNotifier.dispose();
     showMiniPlayerHeartNotifier.dispose();
     showMiniPlayerRepeatNotifier.dispose();

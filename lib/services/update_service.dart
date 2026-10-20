@@ -45,7 +45,7 @@ class ReleaseInfo {
 }
 
 class UpdateService {
-  static const String currentVersion = '2.1.2';
+  static const String currentVersion = '2.1.3';
 
   static const String _apiUrl =
       'https://api.github.com/repos/ysnsk111/Musly-vt-fork/releases/latest';

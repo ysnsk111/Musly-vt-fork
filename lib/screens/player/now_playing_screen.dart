@@ -7,6 +7,8 @@ import 'package:musly/widgets/now_playing/playback_controls.dart';
 import 'package:musly/widgets/now_playing/playback_progress_slider.dart';
 import 'package:musly/widgets/now_playing/volume_slider.dart';
 import 'package:musly/widgets/now_playing/now_playing_bottom_actions.dart';
+import 'package:musly/widgets/now_playing/vinyl_record_player.dart';
+import 'package:musly/widgets/now_playing/compact_lyrics_view.dart';
 import 'lyrics_screen.dart';
 import 'package:musly/models/lyric_line.dart';
 import 'package:provider/provider.dart';
@@ -61,9 +63,16 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
   Song? _lastSong;
   ImageProvider? _currentImageProvider;
 
+  // Interruptible vertical drag-to-dismiss
   double _dragOffset = 0.0;
   late AnimationController _springController;
   Animation<double>? _springAnimation;
+
+  // Song switching interactive carousel / slide controller
+  double _coverDragOffset = 0.0;
+  late AnimationController _coverSlideController;
+  Animation<double>? _coverSlideAnimation;
+  bool _isManualCoverSwitching = false;
 
   @override
   void initState() {
@@ -78,6 +87,18 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
           });
         }
       });
+
+    _coverSlideController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 280),
+    )..addListener(() {
+        if (_coverSlideAnimation != null) {
+          setState(() {
+            _coverDragOffset = _coverSlideAnimation!.value;
+          });
+        }
+      });
+
     _pageController = PageController(initialPage: 0);
     _fetchedLyrics = widget.lyrics;
     _currentImageProvider = widget.image;
@@ -95,6 +116,18 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
       _lastSong = provider.currentSong;
       _updateImageProviderAndColors();
       _fetchLyrics();
+      if (!_isManualCoverSwitching && mounted) {
+        _coverSlideAnimation = Tween<double>(
+          begin: 40.0,
+          end: 0.0,
+        ).animate(
+          CurvedAnimation(
+            parent: _coverSlideController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+        _coverSlideController.forward(from: 0.0);
+      }
     }
   }
 
@@ -200,25 +233,61 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
   @override
   void dispose() {
     _springController.dispose();
+    _coverSlideController.dispose();
     _pageController.dispose();
     super.dispose();
+  }
+
+  // Vertical Interruptible Drag-to-Dismiss handlers
+  void _onVerticalDragDown(DragDownDetails details) {
+    if (_springController.isAnimating) {
+      _springController.stop();
+    }
+  }
+
+  void _onVerticalDragStart(DragStartDetails details) {
+    if (_springController.isAnimating) {
+      _springController.stop();
+    }
   }
 
   void _onVerticalDragUpdate(DragUpdateDetails details) {
     if (_springController.isAnimating) _springController.stop();
     final newOffset = _dragOffset + details.delta.dy;
-    if (newOffset >= 0) {
+    if (newOffset < 0) {
+      // Damped rubber-banding resistance when pulling up
       setState(() {
-        _dragOffset = newOffset;
+        _dragOffset += details.delta.dy * 0.25;
+      });
+    } else {
+      setState(() {
+        _dragOffset = newOffset.clamp(-50.0, 1200.0);
       });
     }
   }
 
   void _onVerticalDragEnd(DragEndDetails details) {
     final velocity = details.primaryVelocity ?? 0;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     if (_dragOffset > 150 || velocity > 320) {
-      Navigator.of(context).pop();
-    } else if (_dragOffset > 0) {
+      // Smooth interruptible dismiss downwards
+      _springAnimation = Tween<double>(
+        begin: _dragOffset,
+        end: screenHeight,
+      ).animate(
+        CurvedAnimation(
+          parent: _springController,
+          curve: Curves.easeOutCubic,
+        ),
+      );
+      _springController.forward(from: 0.0).then((_) {
+        if (mounted && _dragOffset >= screenHeight * 0.75) {
+          Navigator.of(context).pop();
+        }
+      });
+    } else {
+      // Rebound back up with elastic spring
       _springAnimation = Tween<double>(
         begin: _dragOffset,
         end: 0.0,
@@ -230,6 +299,89 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
       );
       _springController.forward(from: 0.0);
     }
+  }
+
+  // Horizontal Interruptible Song Switching Drag Handlers
+  void _onCoverDragDown(DragDownDetails details) {
+    if (_coverSlideController.isAnimating) {
+      _coverSlideController.stop();
+    }
+  }
+
+  void _onCoverDragUpdate(DragUpdateDetails details) {
+    if (_coverSlideController.isAnimating) {
+      _coverSlideController.stop();
+    }
+    setState(() {
+      _coverDragOffset =
+          (_coverDragOffset + details.primaryDelta!).clamp(-260.0, 260.0);
+    });
+  }
+
+  void _onCoverDragEnd(DragEndDetails details, PlayerProvider provider) {
+    final velocity = details.primaryVelocity ?? 0;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    if (velocity < -240 || _coverDragOffset < -65) {
+      // Swipe left -> Skip Next
+      HapticFeedback.mediumImpact();
+      _animateCoverSwitch(
+        targetOffset: -screenWidth * 0.85,
+        incomingOffset: screenWidth * 0.8,
+        action: () => provider.skipNext(),
+      );
+    } else if (velocity > 240 || _coverDragOffset > 65) {
+      // Swipe right -> Skip Previous
+      HapticFeedback.mediumImpact();
+      _animateCoverSwitch(
+        targetOffset: screenWidth * 0.85,
+        incomingOffset: -screenWidth * 0.8,
+        action: () => provider.skipPrevious(),
+      );
+    } else {
+      _reboundCover();
+    }
+  }
+
+  void _animateCoverSwitch({
+    required double targetOffset,
+    required double incomingOffset,
+    required VoidCallback action,
+  }) {
+    _isManualCoverSwitching = true;
+    _coverSlideAnimation = Tween<double>(
+      begin: _coverDragOffset,
+      end: targetOffset,
+    ).animate(
+      CurvedAnimation(parent: _coverSlideController, curve: Curves.easeInCubic),
+    );
+    _coverSlideController.forward(from: 0.0).then((_) {
+      action();
+      if (!mounted) return;
+      setState(() {
+        _coverDragOffset = incomingOffset;
+      });
+      _coverSlideAnimation = Tween<double>(
+        begin: incomingOffset,
+        end: 0.0,
+      ).animate(
+        CurvedAnimation(
+            parent: _coverSlideController, curve: Curves.easeOutCubic),
+      );
+      _coverSlideController.forward(from: 0.0).then((_) {
+        _isManualCoverSwitching = false;
+      });
+    });
+  }
+
+  void _reboundCover() {
+    _coverSlideAnimation = Tween<double>(
+      begin: _coverDragOffset,
+      end: 0.0,
+    ).animate(
+      CurvedAnimation(parent: _coverSlideController, curve: Curves.easeOutCubic),
+    );
+    _coverSlideController.forward(from: 0.0);
   }
 
   @override
@@ -274,6 +426,8 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
           alpha: (1.0 - dragProgress * 0.45).clamp(0.0, 1.0),
         ),
         body: GestureDetector(
+          onVerticalDragDown: isLandscape ? null : _onVerticalDragDown,
+          onVerticalDragStart: isLandscape ? null : _onVerticalDragStart,
           onVerticalDragUpdate: isLandscape ? null : _onVerticalDragUpdate,
           onVerticalDragEnd: isLandscape ? null : _onVerticalDragEnd,
           child: Transform.translate(
@@ -738,33 +892,72 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
         final artist = currentSong?.artist ?? widget.artist;
         final isStarred = currentSong?.starred ?? false;
 
-        if (isLandscape) {
-          return _buildLandscapeLayout(
-            context,
-            provider,
-            currentSong,
-            title,
-            artist,
-            isStarred,
-            accentColor,
-            effectiveTopPadding,
-            effectiveLeftPadding,
-            effectiveRightPadding,
-          );
-        }
+        return ValueListenableBuilder<String>(
+          valueListenable:
+              PlayerUiSettingsService().playerLayoutStyleNotifier,
+          builder: (context, layoutStyle, _) {
+            if (isLandscape) {
+              return _buildLandscapeLayout(
+                context,
+                provider,
+                currentSong,
+                title,
+                artist,
+                isStarred,
+                accentColor,
+                effectiveTopPadding,
+                effectiveLeftPadding,
+                effectiveRightPadding,
+                layoutStyle: layoutStyle,
+              );
+            }
 
-        return _buildPortraitLayout(
-          context,
-          provider,
-          currentSong,
-          title,
-          artist,
-          isStarred,
-          accentColor,
-          effectiveTopPadding,
-          effectiveBottomPadding,
+            return _buildPortraitLayout(
+              context,
+              provider,
+              currentSong,
+              title,
+              artist,
+              isStarred,
+              accentColor,
+              effectiveTopPadding,
+              effectiveBottomPadding,
+              layoutStyle: layoutStyle,
+            );
+          },
         );
       },
+    );
+  }
+
+  Widget _buildCoverContainer({
+    required Widget child,
+    required PlayerProvider provider,
+  }) {
+    final double angle = _coverDragOffset * 0.0006;
+    final double scale =
+        (1.0 - (_coverDragOffset.abs() / 2000.0)).clamp(0.92, 1.0);
+    final double opacity =
+        (1.0 - (_coverDragOffset.abs() / 600.0)).clamp(0.3, 1.0);
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onHorizontalDragDown: _onCoverDragDown,
+      onHorizontalDragUpdate: _onCoverDragUpdate,
+      onHorizontalDragEnd: (details) => _onCoverDragEnd(details, provider),
+      child: Transform.translate(
+        offset: Offset(_coverDragOffset, 0),
+        child: Transform.rotate(
+          angle: angle,
+          child: Transform.scale(
+            scale: scale,
+            child: Opacity(
+              opacity: opacity,
+              child: child,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -778,10 +971,29 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
     Color accentColor,
     double effectiveTopPadding,
     double effectiveLeftPadding,
-    double effectiveRightPadding,
-  ) {
+    double effectiveRightPadding, {
+    String layoutStyle = 'standard',
+  }) {
     final topPadding =
         effectiveTopPadding > 0 ? effectiveTopPadding + 44.0 : 48.0;
+
+    final Widget artWidget;
+    if (layoutStyle == 'vinyl') {
+      artWidget = VinylRecordPlayer(
+        image: _currentImageProvider ?? widget.image,
+        isPlaying: provider.isPlaying,
+        heroTag: currentSong != null
+            ? 'cover_${currentSong.id}'
+            : widget.heroTag,
+        dragOffset: _coverDragOffset,
+      );
+    } else {
+      artWidget = AlbumArtView(
+        image: _currentImageProvider ?? widget.image,
+        tag: currentSong != null ? 'cover_${currentSong.id}' : widget.heroTag,
+      );
+    }
+
     return SafeArea(
       top: false,
       child: Padding(
@@ -806,24 +1018,9 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
                             horizontal: 12.0, vertical: 4.0),
                         child: AspectRatio(
                           aspectRatio: 1.0,
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onHorizontalDragEnd: (details) {
-                              final vel = details.primaryVelocity;
-                              if (vel != null) {
-                                if (vel < -250) {
-                                  provider.skipNext();
-                                } else if (vel > 250) {
-                                  provider.skipPrevious();
-                                }
-                              }
-                            },
-                            child: AlbumArtView(
-                              image: _currentImageProvider ?? widget.image,
-                              tag: currentSong != null
-                                  ? 'cover_${currentSong.id}'
-                                  : widget.heroTag,
-                            ),
+                          child: _buildCoverContainer(
+                            provider: provider,
+                            child: artWidget,
                           ),
                         ),
                       ),
@@ -959,6 +1156,71 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
     bool isStarred,
     Color accentColor,
     double effectiveTopPadding,
+    double effectiveBottomPadding, {
+    String layoutStyle = 'standard',
+  }) {
+    switch (layoutStyle) {
+      case 'vinyl':
+        return _buildVinylPortraitLayout(
+          context,
+          provider,
+          currentSong,
+          title,
+          artist,
+          isStarred,
+          accentColor,
+          effectiveTopPadding,
+          effectiveBottomPadding,
+        );
+      case 'immersive':
+        return _buildImmersivePortraitLayout(
+          context,
+          provider,
+          currentSong,
+          title,
+          artist,
+          isStarred,
+          accentColor,
+          effectiveTopPadding,
+          effectiveBottomPadding,
+        );
+      case 'minimal':
+        return _buildMinimalPortraitLayout(
+          context,
+          provider,
+          currentSong,
+          title,
+          artist,
+          isStarred,
+          accentColor,
+          effectiveTopPadding,
+          effectiveBottomPadding,
+        );
+      case 'standard':
+      default:
+        return _buildStandardPortraitLayout(
+          context,
+          provider,
+          currentSong,
+          title,
+          artist,
+          isStarred,
+          accentColor,
+          effectiveTopPadding,
+          effectiveBottomPadding,
+        );
+    }
+  }
+
+  Widget _buildStandardPortraitLayout(
+    BuildContext context,
+    PlayerProvider provider,
+    Song? currentSong,
+    String title,
+    String artist,
+    bool isStarred,
+    Color accentColor,
+    double effectiveTopPadding,
     double effectiveBottomPadding,
   ) {
     return LayoutBuilder(
@@ -1001,18 +1263,8 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
                     ),
                     child: AspectRatio(
                       aspectRatio: 1.0,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onHorizontalDragEnd: (details) {
-                          final vel = details.primaryVelocity;
-                          if (vel != null) {
-                            if (vel < -250) {
-                              provider.skipNext();
-                            } else if (vel > 250) {
-                              provider.skipPrevious();
-                            }
-                          }
-                        },
+                      child: _buildCoverContainer(
+                        provider: provider,
                         child: AlbumArtView(
                           image: _currentImageProvider ?? widget.image,
                           tag: currentSong != null
@@ -1080,6 +1332,529 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
                   );
                 },
               ),
+              NowPlayingBottomActions(
+                isLyricsActive: _currentPage == 1,
+                isQueueActive: _currentPage == 2,
+                accentColor: accentColor,
+                onLyricsTap: () {
+                  if (_currentPage == 1) {
+                    _pageController.animateToPage(0,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  } else {
+                    _pageController.animateToPage(1,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  }
+                },
+                onQueueTap: () {
+                  if (_currentPage == 2) {
+                    _pageController.animateToPage(0,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  } else {
+                    _pageController.animateToPage(2,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  }
+                },
+              ),
+              SizedBox(height: bottomActionsSpacing),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildVinylPortraitLayout(
+    BuildContext context,
+    PlayerProvider provider,
+    Song? currentSong,
+    String title,
+    String artist,
+    bool isStarred,
+    Color accentColor,
+    double effectiveTopPadding,
+    double effectiveBottomPadding,
+  ) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenHeight = constraints.maxHeight;
+        final isSmall = screenHeight < 720;
+
+        final headerClearance = effectiveTopPadding > 0
+            ? effectiveTopPadding + (isSmall ? 40.0 : 48.0)
+            : (isSmall ? 44.0 : 52.0);
+
+        final bottomActionsSpacing = effectiveBottomPadding > 0
+            ? effectiveBottomPadding + 4.0
+            : (isSmall ? 6.0 : 12.0);
+
+        return SafeArea(
+          top: false,
+          bottom: false,
+          child: Column(
+            children: [
+              SizedBox(height: headerClearance),
+              Expanded(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 4.0),
+                    child: _buildCoverContainer(
+                      provider: provider,
+                      child: VinylRecordPlayer(
+                        image: _currentImageProvider ?? widget.image,
+                        isPlaying: provider.isPlaying,
+                        heroTag: currentSong != null
+                            ? 'cover_${currentSong.id}'
+                            : widget.heroTag,
+                        dragOffset: _coverDragOffset,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              _buildLiveLyricPill(provider, accentColor, isSmall: isSmall),
+              _buildTitleArtistRow(
+                context,
+                provider,
+                currentSong,
+                title,
+                artist,
+                isStarred,
+                isSmall: isSmall,
+                verticalPadding: isSmall ? 4.0 : 8.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: StreamBuilder<Duration>(
+                  stream: provider.positionStream,
+                  initialData: provider.position,
+                  builder: (context, snapshot) {
+                    return PlaybackProgressSlider(
+                      position: snapshot.data ?? Duration.zero,
+                      duration: provider.duration,
+                      accentColor: Colors.white,
+                      onChanged: (val) {
+                        provider.seek(val);
+                      },
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: isSmall ? 4.0 : 8.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: PlaybackControls(
+                  isPlaying: provider.isPlaying,
+                  isShuffleEnabled: provider.shuffleEnabled,
+                  isRepeatEnabled: provider.repeatMode != RepeatMode.off,
+                  accentColor: accentColor,
+                  onPlayPause: () => provider.togglePlayPause(),
+                  onNext: () => provider.skipNext(),
+                  onPrevious: () => provider.skipPrevious(),
+                  onShuffleToggle: () => provider.toggleShuffle(),
+                  onRepeatToggle: () => provider.toggleRepeat(),
+                ),
+              ),
+              SizedBox(height: isSmall ? 4.0 : 8.0),
+              NowPlayingBottomActions(
+                isLyricsActive: _currentPage == 1,
+                isQueueActive: _currentPage == 2,
+                accentColor: accentColor,
+                onLyricsTap: () {
+                  if (_currentPage == 1) {
+                    _pageController.animateToPage(0,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  } else {
+                    _pageController.animateToPage(1,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  }
+                },
+                onQueueTap: () {
+                  if (_currentPage == 2) {
+                    _pageController.animateToPage(0,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  } else {
+                    _pageController.animateToPage(2,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  }
+                },
+              ),
+              SizedBox(height: bottomActionsSpacing),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildImmersivePortraitLayout(
+    BuildContext context,
+    PlayerProvider provider,
+    Song? currentSong,
+    String title,
+    String artist,
+    bool isStarred,
+    Color accentColor,
+    double effectiveTopPadding,
+    double effectiveBottomPadding,
+  ) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenHeight = constraints.maxHeight;
+        final screenWidth = constraints.maxWidth;
+        final isSmall = screenHeight < 720;
+
+        final headerClearance = effectiveTopPadding > 0
+            ? effectiveTopPadding + (isSmall ? 42.0 : 50.0)
+            : (isSmall ? 44.0 : 52.0);
+
+        final bottomActionsSpacing = effectiveBottomPadding > 0
+            ? effectiveBottomPadding + 4.0
+            : (isSmall ? 6.0 : 10.0);
+
+        final cardHorizontalPadding = screenWidth > 460 ? 24.0 : 16.0;
+
+        return SafeArea(
+          top: false,
+          bottom: false,
+          child: Column(
+            children: [
+              SizedBox(height: headerClearance),
+              // Expanded Poster Cover
+              Expanded(
+                flex: 5,
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0, vertical: 6.0),
+                    child: AspectRatio(
+                      aspectRatio: 0.98,
+                      child: _buildCoverContainer(
+                        provider: provider,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(26),
+                            boxShadow: [
+                              BoxShadow(
+                                color: accentColor.withValues(alpha: 0.28),
+                                blurRadius: 28,
+                                spreadRadius: 2,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(26),
+                            child: Image(
+                              image: _currentImageProvider ?? widget.image,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                color: Colors.grey[900],
+                                child: const Icon(Icons.music_note_rounded,
+                                    size: 64, color: Colors.white54),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // Floating Frosted Island Card for Controls
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: cardHorizontalPadding, vertical: 6.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(26),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(26),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.12),
+                        width: 1.0,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.25),
+                          blurRadius: 18,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildTitleArtistRow(
+                          context,
+                          provider,
+                          currentSong,
+                          title,
+                          artist,
+                          isStarred,
+                          isSmall: isSmall,
+                          verticalPadding: 6.0,
+                        ),
+                        _buildLiveLyricPill(provider, accentColor,
+                            isSmall: true),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: StreamBuilder<Duration>(
+                            stream: provider.positionStream,
+                            initialData: provider.position,
+                            builder: (context, snapshot) {
+                              return PlaybackProgressSlider(
+                                position: snapshot.data ?? Duration.zero,
+                                duration: provider.duration,
+                                accentColor: Colors.white,
+                                onChanged: (val) {
+                                  provider.seek(val);
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 4.0),
+                          child: PlaybackControls(
+                            isPlaying: provider.isPlaying,
+                            isShuffleEnabled: provider.shuffleEnabled,
+                            isRepeatEnabled:
+                                provider.repeatMode != RepeatMode.off,
+                            accentColor: accentColor,
+                            onPlayPause: () => provider.togglePlayPause(),
+                            onNext: () => provider.skipNext(),
+                            onPrevious: () => provider.skipPrevious(),
+                            onShuffleToggle: () => provider.toggleShuffle(),
+                            onRepeatToggle: () => provider.toggleRepeat(),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              NowPlayingBottomActions(
+                isLyricsActive: _currentPage == 1,
+                isQueueActive: _currentPage == 2,
+                accentColor: accentColor,
+                onLyricsTap: () {
+                  if (_currentPage == 1) {
+                    _pageController.animateToPage(0,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  } else {
+                    _pageController.animateToPage(1,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  }
+                },
+                onQueueTap: () {
+                  if (_currentPage == 2) {
+                    _pageController.animateToPage(0,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  } else {
+                    _pageController.animateToPage(2,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  }
+                },
+              ),
+              SizedBox(height: bottomActionsSpacing),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMinimalPortraitLayout(
+    BuildContext context,
+    PlayerProvider provider,
+    Song? currentSong,
+    String title,
+    String artist,
+    bool isStarred,
+    Color accentColor,
+    double effectiveTopPadding,
+    double effectiveBottomPadding,
+  ) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenHeight = constraints.maxHeight;
+        final isSmall = screenHeight < 720;
+
+        final headerClearance = effectiveTopPadding > 0
+            ? effectiveTopPadding + (isSmall ? 40.0 : 48.0)
+            : (isSmall ? 44.0 : 52.0);
+
+        final bottomActionsSpacing = effectiveBottomPadding > 0
+            ? effectiveBottomPadding + 4.0
+            : (isSmall ? 6.0 : 10.0);
+
+        return SafeArea(
+          top: false,
+          bottom: false,
+          child: Column(
+            children: [
+              SizedBox(height: headerClearance),
+              // Top Sleek Header Info with Micro Album Art
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24.0, vertical: 6.0),
+                child: Row(
+                  children: [
+                    _buildCoverContainer(
+                      provider: provider,
+                      child: Container(
+                        width: 62,
+                        height: 62,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.35),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image(
+                            image: _currentImageProvider ?? widget.image,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          MarqueeText(
+                            text: title,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          MultiArtistWidget(
+                            artists: currentSong?.artistParticipants,
+                            artistFallback: artist,
+                            artistIdFallback: currentSong?.artistId,
+                            onBeforeNavigate: () => Navigator.pop(context),
+                            style: TextStyle(
+                              fontSize: 13.5,
+                              color: Colors.white.withValues(alpha: 0.75),
+                            ),
+                          ),
+                          if (currentSong != null)
+                            AudioQualityBadge(
+                              song: currentSong,
+                              fontSize: 9.5,
+                            ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        isStarred
+                            ? Icons.favorite_rounded
+                            : Icons.favorite_border_rounded,
+                        color: isStarred
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.white,
+                        size: 22,
+                      ),
+                      onPressed: () {
+                        if (currentSong == null) return;
+                        HapticFeedback.mediumImpact();
+                        provider.toggleFavorite();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              // Synchronized Live Lyrics Viewport
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0, vertical: 10.0),
+                  child: Center(
+                    child: StreamBuilder<Duration>(
+                      stream: provider.positionStream,
+                      initialData: provider.position,
+                      builder: (context, snapshot) {
+                        return CompactLyricsView(
+                          lyrics: _fetchedLyrics,
+                          position: snapshot.data ?? Duration.zero,
+                          accentColor: accentColor,
+                          onSeek: (pos) => provider.seek(pos),
+                          onExpandLyrics: () {
+                            _pageController.animateToPage(1,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: StreamBuilder<Duration>(
+                  stream: provider.positionStream,
+                  initialData: provider.position,
+                  builder: (context, snapshot) {
+                    return PlaybackProgressSlider(
+                      position: snapshot.data ?? Duration.zero,
+                      duration: provider.duration,
+                      accentColor: Colors.white,
+                      onChanged: (val) {
+                        provider.seek(val);
+                      },
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: PlaybackControls(
+                  isPlaying: provider.isPlaying,
+                  isShuffleEnabled: provider.shuffleEnabled,
+                  isRepeatEnabled: provider.repeatMode != RepeatMode.off,
+                  accentColor: accentColor,
+                  onPlayPause: () => provider.togglePlayPause(),
+                  onNext: () => provider.skipNext(),
+                  onPrevious: () => provider.skipPrevious(),
+                  onShuffleToggle: () => provider.toggleShuffle(),
+                  onRepeatToggle: () => provider.toggleRepeat(),
+                ),
+              ),
+              const SizedBox(height: 6),
               NowPlayingBottomActions(
                 isLyricsActive: _currentPage == 1,
                 isQueueActive: _currentPage == 2,

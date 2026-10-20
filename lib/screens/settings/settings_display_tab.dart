@@ -39,6 +39,7 @@ class _SettingsDisplayTabState extends State<SettingsDisplayTab> {
   bool _lyricsGlowEffect = true;
   bool _hideWindowTitlebar = false;
   String _artworkResolution = 'normal';
+  String _playerLayoutStyle = 'standard';
 
   ThemeMode _themeMode = ThemeMode.system;
   AccentColor _accentColor = AccentColor.red;
@@ -73,6 +74,7 @@ class _SettingsDisplayTabState extends State<SettingsDisplayTab> {
       _lyricsAlignment = _playerUiSettings.getLyricsAlignment();
       _lyricsGlowEffect = _playerUiSettings.getLyricsGlowEffect();
       _artworkResolution = _playerUiSettings.getArtworkResolution();
+      _playerLayoutStyle = _playerUiSettings.getPlayerLayoutStyle();
       _themeMode = themeService.themeMode;
       _accentColor = themeService.accentColor;
     });
@@ -108,6 +110,8 @@ class _SettingsDisplayTabState extends State<SettingsDisplayTab> {
         SettingsSectionCard(
           title: AppLocalizations.of(context)!.playerInterface.toUpperCase(),
           children: [
+            _buildPlayerLayoutStyleSelector(),
+            const SettingsDivider(),
             _buildVolumeSliderToggle(),
             if (!isYoutube) ...[
               const SettingsDivider(),
@@ -215,6 +219,201 @@ class _SettingsDisplayTabState extends State<SettingsDisplayTab> {
                 await themeService.setAccentColor(color);
               },
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlayerLayoutStyleSelector() {
+    final styles = [
+      (
+        'standard',
+        '标准卡片',
+        'Salt 现代卡片布局，均衡实用',
+        Icons.view_agenda_rounded,
+        const [Color(0xFF007AFF), Color(0xFF00C6FF)],
+      ),
+      (
+        'immersive',
+        '沉浸全景',
+        '大幅艺术封面与毛玻璃浮层交互',
+        Icons.fullscreen_rounded,
+        const [Color(0xFFFF2D55), Color(0xFFFF6B6B)],
+      ),
+      (
+        'vinyl',
+        '拟物黑胶',
+        '经典黑胶唱盘旋转与动态机械唱针',
+        Icons.album_rounded,
+        const [Color(0xFFFF9500), Color(0xFFFFD600)],
+      ),
+      (
+        'minimal',
+        '极简纯粹',
+        '灵动微缩封面，优雅排版聚焦歌词',
+        Icons.notes_rounded,
+        const [Color(0xFF5856D6), Color(0xFFAF52DE)],
+      ),
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              SettingsIconBadge(
+                gradientColors: const [Color(0xFFFF5252), Color(0xFFFF7A00)],
+                icon: Icons.dashboard_customize_rounded,
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '播放界面模板样式 (Salt Player 风格)',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      '自由切换正在播放页面的视觉呈现与交互布局',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isWide = constraints.maxWidth > 500;
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: styles.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: isWide ? 4 : 2,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: isWide ? 1.4 : 1.35,
+                ),
+                itemBuilder: (context, index) {
+                  final (id, name, desc, icon, colors) = styles[index];
+                  final isSelected = _playerLayoutStyle == id;
+                  final theme = Theme.of(context);
+                  final isDark = theme.brightness == Brightness.dark;
+
+                  return Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () async {
+                        setState(() => _playerLayoutStyle = id);
+                        await _playerUiSettings.setPlayerLayoutStyle(id);
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 240),
+                        curve: Curves.easeOutCubic,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? (isDark
+                                  ? colors[0].withValues(alpha: 0.22)
+                                  : colors[0].withValues(alpha: 0.12))
+                              : (isDark
+                                  ? Colors.white.withValues(alpha: 0.05)
+                                  : Colors.black.withValues(alpha: 0.03)),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: isSelected
+                                ? colors[0]
+                                : (isDark
+                                    ? Colors.white.withValues(alpha: 0.08)
+                                    : Colors.black.withValues(alpha: 0.06)),
+                            width: isSelected ? 2.0 : 1.0,
+                          ),
+                          boxShadow: isSelected
+                              ? [
+                                  BoxShadow(
+                                    color: colors[0].withValues(alpha: 0.25),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  )
+                                ]
+                              : null,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(7),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: colors,
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(icon, color: Colors.white, size: 18),
+                                ),
+                                if (isSelected)
+                                  Icon(
+                                    Icons.check_circle_rounded,
+                                    color: colors[0],
+                                    size: 18,
+                                  ),
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  name,
+                                  style: TextStyle(
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.w600,
+                                    fontSize: 13.5,
+                                    color: isSelected
+                                        ? (isDark ? Colors.white : colors[0])
+                                        : null,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  desc,
+                                  style: TextStyle(
+                                    fontSize: 10.5,
+                                    color: isDark
+                                        ? Colors.white60
+                                        : Colors.black54,
+                                    height: 1.15,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
           ),
         ],
       ),

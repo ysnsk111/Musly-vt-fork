@@ -16,10 +16,124 @@ import 'package:musly/services/subsonic_service.dart';
 import 'package:musly/widgets/common/album_artwork.dart';
 import 'package:musly/screens/player/now_playing_screen.dart';
 
-class MiniPlayer extends StatelessWidget {
+class MiniPlayer extends StatefulWidget {
   final VoidCallback? onTap;
 
   const MiniPlayer({super.key, this.onTap});
+
+  @override
+  State<MiniPlayer> createState() => _MiniPlayerState();
+}
+
+class _MiniPlayerState extends State<MiniPlayer>
+    with SingleTickerProviderStateMixin {
+  double _dragOffset = 0.0;
+  late AnimationController _springController;
+  Animation<double>? _springAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _springController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 260),
+    )..addListener(() {
+        if (_springAnimation != null) {
+          setState(() {
+            _dragOffset = _springAnimation!.value;
+          });
+        }
+      });
+  }
+
+  @override
+  void dispose() {
+    _springController.dispose();
+    super.dispose();
+  }
+
+  void _onHorizontalDragDown(DragDownDetails details) {
+    if (_springController.isAnimating) {
+      _springController.stop();
+    }
+  }
+
+  void _onHorizontalDragUpdate(DragUpdateDetails details) {
+    if (_springController.isAnimating) {
+      _springController.stop();
+    }
+    setState(() {
+      _dragOffset = (_dragOffset + details.primaryDelta!).clamp(-160.0, 160.0);
+    });
+  }
+
+  void _onHorizontalDragEnd(
+    DragEndDetails details,
+    PlayerProvider provider,
+    bool isRadio,
+  ) {
+    if (isRadio) {
+      _rebound();
+      return;
+    }
+    final velocity = details.primaryVelocity ?? 0;
+    if (velocity < -240 || _dragOffset < -60) {
+      // Swipe left -> Skip next
+      HapticFeedback.mediumImpact();
+      _animateSlideAndAction(
+        targetOffset: -220.0,
+        incomingOffset: 200.0,
+        action: () => provider.skipNext(),
+      );
+    } else if (velocity > 240 || _dragOffset > 60) {
+      // Swipe right -> Skip previous
+      HapticFeedback.mediumImpact();
+      _animateSlideAndAction(
+        targetOffset: 220.0,
+        incomingOffset: -200.0,
+        action: () => provider.skipPrevious(),
+      );
+    } else {
+      _rebound();
+    }
+  }
+
+  void _animateSlideAndAction({
+    required double targetOffset,
+    required double incomingOffset,
+    required VoidCallback action,
+  }) {
+    _springAnimation = Tween<double>(
+      begin: _dragOffset,
+      end: targetOffset,
+    ).animate(
+      CurvedAnimation(parent: _springController, curve: Curves.easeInQuad),
+    );
+    _springController.forward(from: 0.0).then((_) {
+      action();
+      if (!mounted) return;
+      setState(() {
+        _dragOffset = incomingOffset;
+      });
+      _springAnimation = Tween<double>(
+        begin: incomingOffset,
+        end: 0.0,
+      ).animate(
+        CurvedAnimation(parent: _springController, curve: Curves.easeOutCubic),
+      );
+      _springController.forward(from: 0.0);
+    });
+  }
+
+  void _rebound() {
+    _springAnimation = Tween<double>(
+      begin: _dragOffset,
+      end: 0.0,
+    ).animate(
+      CurvedAnimation(parent: _springController, curve: Curves.easeOutCubic),
+    );
+    _springController.forward(from: 0.0);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +148,8 @@ class MiniPlayer extends StatelessWidget {
         final (currentSong, currentRadioStation, isPlayingRadio) = data;
 
         void handleTap() {
-          if (onTap != null) {
-            onTap!();
+          if (widget.onTap != null) {
+            widget.onTap!();
             return;
           }
           if (currentSong != null) {
@@ -127,12 +241,15 @@ class MiniPlayer extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
+        final playerProvider = Provider.of<PlayerProvider>(context, listen: false);
+
         final Widget row = _MiniPlayerRow(
           songId: currentSong?.id,
           title: title,
           subtitle: subtitle,
           coverArt: coverArt,
           isPlayingRadio: isPlayingRadio,
+          dragOffset: _dragOffset,
         );
 
         return RepaintBoundary(
@@ -144,16 +261,13 @@ class MiniPlayer extends StatelessWidget {
                 filter: ImageFilter.blur(sigmaX: 28.0, sigmaY: 28.0),
                 child: GestureDetector(
                   onTap: handleTap,
-                  onHorizontalDragEnd: (details) {
-                    final velocity = details.primaryVelocity ?? 0;
-                    if (velocity < -200) {
-                      Provider.of<PlayerProvider>(context, listen: false).skipNext();
-                      HapticFeedback.mediumImpact();
-                    } else if (velocity > 200) {
-                      Provider.of<PlayerProvider>(context, listen: false).skipPrevious();
-                      HapticFeedback.mediumImpact();
-                    }
-                  },
+                  onHorizontalDragDown: _onHorizontalDragDown,
+                  onHorizontalDragUpdate: _onHorizontalDragUpdate,
+                  onHorizontalDragEnd: (details) => _onHorizontalDragEnd(
+                    details,
+                    playerProvider,
+                    isPlayingRadio,
+                  ),
                   child: Container(
                     height: 64,
                     decoration: BoxDecoration(
@@ -269,6 +383,7 @@ class _MiniPlayerRow extends StatelessWidget {
   final String? subtitle;
   final String? coverArt;
   final bool isPlayingRadio;
+  final double dragOffset;
 
   const _MiniPlayerRow({
     this.songId,
@@ -276,87 +391,184 @@ class _MiniPlayerRow extends StatelessWidget {
     required this.subtitle,
     required this.coverArt,
     required this.isPlayingRadio,
+    this.dragOffset = 0.0,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final double opacity = (1.0 - (dragOffset.abs() / 250.0)).clamp(0.2, 1.0);
+    final double prevCueOpacity =
+        dragOffset > 15 ? (dragOffset / 60.0).clamp(0.0, 1.0) : 0.0;
+    final double nextCueOpacity =
+        dragOffset < -15 ? (-dragOffset / 60.0).clamp(0.0, 1.0) : 0.0;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          if (isPlayingRadio)
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFFFF2D55), Color(0xFFFF6B35)],
-                ),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: const Icon(Icons.radio, color: Colors.white, size: 24),
-            )
-          else
-            Hero(
-              tag: songId != null ? 'cover_$songId' : 'mini_cover',
-              child:
-                  AlbumArtwork(coverArt: coverArt, size: 44, borderRadius: 6),
-            ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
+          // Left cue indicator (Previous track hint)
+          if (prevCueOpacity > 0 && !isPlayingRadio)
+            Positioned(
+              left: 4,
+              child: Opacity(
+                opacity: prevCueOpacity,
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: theme.colorScheme.primary.withValues(alpha: 0.25),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  child: Icon(
+                    Icons.skip_previous_rounded,
+                    size: 18,
+                    color: theme.colorScheme.primary,
+                  ),
                 ),
-                if (subtitle != null)
-                  Row(
-                    children: [
-                      if (isPlayingRadio) ...[
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 4,
-                            vertical: 1,
+              ),
+            ),
+
+          // Right cue indicator (Next track hint)
+          if (nextCueOpacity > 0 && !isPlayingRadio)
+            Positioned(
+              right: 140, // Position before controls
+              child: Opacity(
+                opacity: nextCueOpacity,
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: theme.colorScheme.primary.withValues(alpha: 0.25),
+                  ),
+                  child: Icon(
+                    Icons.skip_next_rounded,
+                    size: 18,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+              ),
+            ),
+
+          Row(
+            children: [
+              Expanded(
+                child: Transform.translate(
+                  offset: Offset(dragOffset, 0),
+                  child: Opacity(
+                    opacity: opacity,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 320),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      transitionBuilder: (child, anim) {
+                        return FadeTransition(
+                          opacity: anim,
+                          child: SlideTransition(
+                            position: Tween<Offset>(
+                              begin: const Offset(0.12, 0),
+                              end: Offset.zero,
+                            ).animate(anim),
+                            child: child,
                           ),
-                          margin: const EdgeInsets.only(right: 6),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary,
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                          child: const Text(
-                            'LIVE',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 8,
-                              fontWeight: FontWeight.bold,
+                        );
+                      },
+                      child: Row(
+                        key: ValueKey<String>(songId ?? title),
+                        children: [
+                          if (isPlayingRadio)
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(0xFFFF2D55),
+                                    Color(0xFFFF6B35),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Icon(Icons.radio,
+                                  color: Colors.white, size: 24),
+                            )
+                          else
+                            Hero(
+                              tag: songId != null
+                                  ? 'cover_$songId'
+                                  : 'mini_cover',
+                              child: AlbumArtwork(
+                                  coverArt: coverArt,
+                                  size: 44,
+                                  borderRadius: 6),
+                            ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  title,
+                                  style:
+                                      theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                if (subtitle != null)
+                                  Row(
+                                    children: [
+                                      if (isPlayingRadio) ...[
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 4,
+                                            vertical: 1,
+                                          ),
+                                          margin:
+                                              const EdgeInsets.only(right: 6),
+                                          decoration: BoxDecoration(
+                                            color: theme.colorScheme.primary,
+                                            borderRadius:
+                                                BorderRadius.circular(3),
+                                          ),
+                                          child: const Text(
+                                            'LIVE',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 8,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                      Expanded(
+                                        child: Text(
+                                          isPlayingRadio
+                                              ? 'Internet Radio'
+                                              : subtitle!,
+                                          style: theme.textTheme.bodySmall,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                              ],
                             ),
                           ),
-                        ),
-                      ],
-                      Expanded(
-                        child: Text(
-                          isPlayingRadio ? 'Internet Radio' : subtitle!,
-                          style: theme.textTheme.bodySmall,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-              ],
-            ),
+                ),
+              ),
+              _MiniPlayerControls(isRadio: isPlayingRadio),
+            ],
           ),
-          _MiniPlayerControls(isRadio: isPlayingRadio),
         ],
       ),
     );

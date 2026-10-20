@@ -4,6 +4,28 @@ All notable changes to Musly will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [2.1.3] - 2026-10-20 (Veyino Edition)
+
+### Added
+- **可打断播放页全屏手势与转场动画 (Fully Interruptible Now Playing Animations)**:
+  - 垂直下拉手势支持随时触控拦截打断（`onVerticalDragDown` 即时制动弹性回弹或消失动画）。
+  - 向上拖拽具备橡皮筋物理阻尼（Rubber-banding damping）。
+  - 达到阈值后向下平滑加速度淡出退出，未达阈值使用弹性三次贝塞尔曲线弹簧复位。
+- **底部迷你播放标签手势切歌滚动动画 (Mini Player Continuous Scroll & Song Switching Animation)**:
+  - 水平手势实时平移拖拽，具备透明度淡出与边缘轻量切歌指示气泡（上一首/下一首图标）。
+  - 松手顺滑定向飞出并驱动切歌，随后自对向边缘弹簧滑入回弹。
+  - 支持任意时刻触控拦截打断。
+- **正在播放界面切歌动画 (Now Playing Screen Track Switching Animation)**:
+  - 封面与唱片区域水平滑动具备物理倾斜（Tilt）与缩放效果。
+  - 左右滑动手势及非手势切歌（按钮/自动连播）均配备丝滑定向飞出与进入动画。
+- **4 种 Salt Player 风格播放器界面模板样式 (Four Salt Player Themed Layout Styles)**:
+  - **标准卡片 (Standard Card)**: 经典方正大圆角封面、动态光影与紧凑歌词条、多歌手与音质标签，均衡现代。
+  - **沉浸全景 (Immersive Poster)**: 大幅全景海报封面，底部高透浮层毛玻璃卡片收纳标题与控制条，流媒体艺术质感。
+  - **拟物黑胶 (Skeuomorphic Vinyl)**: 真实黑胶唱片唱道反光、中心封面旋转，配备机械唱针在播放时平稳切入并在暂停时柔和抬起。
+  - **极简纯粹 (Minimalist Lyrics-Focus)**: 顶部微缩圆角唱片与标题标签，居中大幅呈现 3-4 行动态流式同步歌词（支持点击即时跳播与全屏展开），下方极简进度与控制。
+- **播放界面快速样式切换入口**:
+  - 播放器更多菜单（...）中新增「播放器界面样式」快速呼出面板，随时随地一键实时热切换，无需进入全局设置。
+
 ## [2.1.2] - 2026-10-19 (Veyino Edition)
 
 ### Added

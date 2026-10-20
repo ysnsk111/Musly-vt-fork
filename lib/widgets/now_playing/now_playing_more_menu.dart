@@ -14,11 +14,117 @@ class NowPlayingMoreMenu extends StatefulWidget {
 class _NowPlayingMoreMenuState extends State<NowPlayingMoreMenu> {
   final _uiSettings = PlayerUiSettingsService();
   int _lyricsOffset = 0;
+  String _currentStyle = 'standard';
 
   @override
   void initState() {
     super.initState();
     _lyricsOffset = _uiSettings.getLyricsSyncOffsetMs();
+    _currentStyle = _uiSettings.getPlayerLayoutStyle();
+  }
+
+  String _getStyleName(String style) {
+    switch (style) {
+      case 'immersive':
+        return '沉浸全景';
+      case 'vinyl':
+        return '拟物黑胶';
+      case 'minimal':
+        return '极简纯粹';
+      case 'standard':
+      default:
+        return '标准卡片';
+    }
+  }
+
+  void _showStyleSelector(BuildContext context) {
+    final styles = [
+      ('standard', '标准卡片', 'Salt 现代卡片布局，均衡实用', Icons.view_agenda_rounded),
+      ('immersive', '沉浸全景', '大幅艺术封面与毛玻璃浮层交互', Icons.fullscreen_rounded),
+      ('vinyl', '拟物黑胶', '经典黑胶唱盘旋转与动态机械唱针', Icons.album_rounded),
+      ('minimal', '极简纯粹', '灵动微缩封面，优雅排版聚焦歌词', Icons.notes_rounded),
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        final theme = Theme.of(ctx);
+        final isDark = theme.brightness == Brightness.dark;
+        return Container(
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1E1E22) : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                  "选择播放器界面样式",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 12),
+              ...styles.map((item) {
+                final (id, name, desc, icon) = item;
+                final isSelected = _currentStyle == id;
+                return ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? theme.colorScheme.primary.withValues(alpha: 0.15)
+                          : Colors.grey.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      icon,
+                      color: isSelected
+                          ? theme.colorScheme.primary
+                          : Colors.grey,
+                      size: 22,
+                    ),
+                  ),
+                  title: Text(
+                    name,
+                    style: TextStyle(
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected ? theme.colorScheme.primary : null,
+                    ),
+                  ),
+                  subtitle: Text(desc, style: const TextStyle(fontSize: 12)),
+                  trailing: isSelected
+                      ? Icon(Icons.check_circle_rounded,
+                          color: theme.colorScheme.primary)
+                      : null,
+                  onTap: () async {
+                    setState(() => _currentStyle = id);
+                    await _uiSettings.setPlayerLayoutStyle(id);
+                    if (ctx.mounted) Navigator.pop(ctx);
+                  },
+                );
+              }),
+              const SizedBox(height: 12),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _adjustOffset(int deltaMs) async {
@@ -136,6 +242,26 @@ class _NowPlayingMoreMenuState extends State<NowPlayingMoreMenu> {
                       ),
                     );
                   },
+                ),
+                const Divider(indent: 56),
+                ListTile(
+                  leading: const Icon(Icons.dashboard_customize_rounded),
+                  title: const Text("播放器界面样式"),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        _getStyleName(_currentStyle),
+                        style: TextStyle(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(Icons.chevron_right_rounded),
+                    ],
+                  ),
+                  onTap: () => _showStyleSelector(context),
                 ),
                 const Divider(indent: 56),
                 // Playback speed section with quick pills
